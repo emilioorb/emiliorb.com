@@ -108,6 +108,35 @@ export const PROYECTOS: readonly Proyecto[] = [
   },
 ].sort((a, b) => Number(b.anio) - Number(a.anio));
 
+/**
+ * Lo que construyo por fuera de Arclo: producto propio y experimentos que
+ * igual viven en producción. Mismo tipo que `PROYECTOS` y mismo orden.
+ */
+export const PROYECTOS_PERSONALES: readonly Proyecto[] = [
+  {
+    // Nombre de trabajo: cambia cuando salga.
+    nombre: "Tape",
+    // Sin enlace hasta que salga.
+    href: null,
+    anio: "2026",
+    detalle: {
+      es: "En construcción. Control de finanzas completo, en tres niveles: personal, en pareja y familiar.",
+      en: "In progress. Complete finance tracking on three levels: personal, shared with a partner, and family.",
+    },
+    stack: ["React Native", "NestJS", "PostgreSQL"],
+  },
+  {
+    nombre: "emiliorb.com",
+    href: "https://emiliorb.com",
+    anio: "2026",
+    detalle: {
+      es: "Este portafolio. Landing bilingüe con enrutado por idioma, tema claro y oscuro, y las animaciones hechas a mano.",
+      en: "This portfolio. Bilingual landing with per-language routing, light and dark themes, and hand-built animations.",
+    },
+    stack: ["Astro", "React", "Tailwind", "GSAP"],
+  },
+].sort((a, b) => Number(b.anio) - Number(a.anio));
+
 export interface Estudio {
   readonly institucion: string;
   readonly href: string;

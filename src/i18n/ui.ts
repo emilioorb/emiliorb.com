@@ -21,6 +21,7 @@ interface Textos {
   };
   readonly work: { titulo: string; presente: string; estudios: string };
   readonly projects: { titulo: string; visitar: string; masPronto: string };
+  readonly personales: { titulo: string };
   readonly contact: {
     titulo: string;
     bajada: string;
@@ -66,11 +67,12 @@ export const TEXTOS: Record<Idioma, Textos> = {
       estudios: "Formación",
     },
     projects: {
-      titulo: "Proyectos",
+      titulo: "Proyectos Arclo Systems",
       visitar: "Visitar",
       masPronto:
         "Estamos construyendo otros proyectos, propios y para clientes, que pronto salen a la luz.",
     },
+    personales: { titulo: "Proyectos personales" },
     contact: {
       titulo: "Contacto",
       bajada: "¿En qué andás?",
@@ -116,11 +118,12 @@ export const TEXTOS: Record<Idioma, Textos> = {
       estudios: "Education",
     },
     projects: {
-      titulo: "Projects",
+      titulo: "Arclo Systems Projects",
       visitar: "Visit",
       masPronto:
         "We are building other projects, our own and for clients, coming out soon.",
     },
+    personales: { titulo: "Personal projects" },
     contact: {
       titulo: "Contact",
       bajada: "What are you working on?",
