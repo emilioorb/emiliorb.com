@@ -1,0 +1,426 @@
+---
+import MenuPildora from "./islas/MenuPildora";
+import { TEXTOS, rutaDe, type Idioma } from "../i18n/ui";
+import { REDES } from "../data/contenido";
+
+interface Props {
+  idioma: Idioma;
+  otro: Idioma;
+}
+
+const { idioma, otro } = Astro.props;
+const t = TEXTOS[idioma];
+const base = rutaDe(idioma);
+
+// La cabecera de Kodi, replicada: a la izquierda el sello en un círculo y una
+// píldora con las secciones; al centro la píldora del menú, que se ensancha,
+// muestra el avance de la página y despliega el resto; a la derecha el
+// destacado.
+const MENU = [
+  {
+    titulo: t.nav.inicio,
+    grande: true,
+    enlaces: [
+      { texto: t.nav.work, href: `${base}#work` },
+      { texto: t.nav.projects, href: `${base}#projects` },
+      { texto: t.nav.contact, href: `${base}#contact` },
+    ],
+  },
+  {
+    titulo: t.idioma,
+    enFila: true,
+    enlaces: [{ texto: t.otroIdioma, href: rutaDe(otro) }],
+  },
+  {
+    titulo: t.redes,
+    enFila: true,
+    enlaces: REDES.map((red) => ({
+      texto: red.nombre,
+      href: red.href,
+      externo: true,
+    })),
+  },
+];
+---
+
+<header class="cabecera">
+  <div class="cabecera__fila">
+    <div class="cabecera__izquierda">
+      <a class="sello" href={base} aria-label={`Emilio Rodríguez — ${t.nav.inicio}`}>
+        <span class="sello__circulo"><span class="sello__letra">e</span></span>
+      </a>
+
+      <nav class="pastilla" aria-label={t.nav.inicio}>
+        <a href={`${base}#work`}>{t.nav.work}</a>
+        <a href={`${base}#projects`}>{t.nav.projects}</a>
+      </nav>
+    </div>
+
+    <div class="cabecera__centro">
+      <MenuPildora
+        client:idle
+        abrir={t.nav.inicio}
+        cerrar={t.tema.cerrar}
+        grupos={MENU}
+      />
+    </div>
+
+    <div class="cabecera__derecha">
+      <a class="cabecera__destacado" href={`${base}#contact`}>{t.nav.contact}</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+  }
+
+  .cabecera__fila {
+    position: relative;
+    display: flex;
+    height: var(--alto-cabecera);
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--pad-seccion);
+  }
+
+  .cabecera__izquierda {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* El menú va pegado al borde derecho en móvil y centrado desde 768. */
+  .cabecera__centro {
+    position: absolute;
+    top: 6px;
+    right: 20px;
+    z-index: 50;
+  }
+
+  @media (min-width: 768px) {
+    .cabecera__centro {
+      right: auto;
+      left: 50%;
+      translate: -50%;
+    }
+  }
+
+  .sello {
+    display: inline-flex;
+    border-radius: 9999px;
+    text-decoration: none;
+  }
+
+  .sello__circulo {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border: 1px solid var(--borde);
+    border-radius: 50%;
+    background: var(--fondo);
+    color: var(--tinta);
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  /* `place-items: center` centra la caja de línea, no la tinta. La `e` no tiene
+     ascendente, así que su centro óptico cae 0.1em por debajo del de la caja. */
+  .sello__letra {
+    display: block;
+    translate: 0 -0.1em;
+  }
+
+  .pastilla {
+    display: none;
+    height: 52px;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    border: 1px solid var(--borde);
+    border-radius: 9999px;
+    background: var(--fondo);
+  }
+
+  @media (min-width: 768px) {
+    .pastilla {
+      display: flex;
+    }
+  }
+
+  .pastilla a {
+    display: flex;
+    height: 40px;
+    align-items: center;
+    padding-inline: 20px;
+    border-radius: 9999px;
+    color: var(--tinta-suave);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 160ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pastilla a:hover {
+      color: var(--tinta);
+    }
+  }
+
+  .cabecera__derecha {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Tinta plena de fondo: el único destacado de la cabecera. */
+  .cabecera__destacado {
+    display: none;
+    height: 52px;
+    align-items: center;
+    padding-inline: 24px;
+    border-radius: 9999px;
+    background: var(--tinta);
+    color: var(--fondo);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: opacity 160ms var(--ease-out);
+  }
+
+  @media (min-width: 768px) {
+    .cabecera__destacado {
+      display: inline-flex;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cabecera__destacado:hover {
+      opacity: 0.85;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pastilla a,
+    .cabecera__destacado {
+      transition: none;
+    }
+  }
+</style>
+
+
+<style is:global>
+  /* Estilos de la isla del menú: el marcado lo pinta React. */
+  .pildora {
+    position: relative;
+    border-radius: 28px;
+    padding: 8px;
+  }
+
+  .pildora__fondo {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--borde);
+    border-radius: 28px;
+    background: var(--fondo);
+    pointer-events: none;
+  }
+
+  .pildora__cuerpo {
+    position: relative;
+  }
+
+  /* La barra invierte los colores de la página: tinta de fondo, superficie de
+     letra. Es lo que la separa del resto de la cabecera. */
+  .pildora__barra {
+    display: flex;
+    height: 52px;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-inline: 6px;
+    border-radius: 9999px;
+    background: var(--tinta);
+    color: var(--fondo);
+  }
+
+  @media (min-width: 768px) {
+    .pildora__barra {
+      justify-content: space-between;
+      padding-right: 8px;
+    }
+  }
+
+  .pildora__boton {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+
+    border: 0;
+    border-radius: 9999px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      opacity 160ms ease,
+      transform 140ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pildora__boton:hover {
+      opacity: 0.8;
+    }
+  }
+
+  /* Con el dedo el botón llegaba a 33px de alto. Donde no hay puntero fino,
+     el mínimo táctil. */
+  @media (pointer: coarse) {
+    .pildora__boton {
+      min-height: 44px;
+    }
+  }
+
+  /* Las dos rayas del ícono, apiladas en la misma celda para poder cruzarlas
+     en aspa sin mover nada de sitio. */
+  .pildora__icono {
+    position: relative;
+    display: grid;
+    width: 16px;
+    height: 16px;
+    place-items: center;
+  }
+
+  .pildora__icono span {
+    grid-area: 1 / 1;
+    width: 15px;
+    height: 1.6px;
+    border-radius: 9999px;
+    background: currentColor;
+  }
+
+  /* El rótulo rota deslizándose; el alto fijo y el recorte son los que impiden
+     que se vea la palabra saliente fuera de la píldora. */
+  .pildora__rotulo {
+    position: relative;
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .pildora__rotulo > span {
+    grid-area: 1 / 1;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .pildora__rotulo--seco {
+    display: inline-block;
+  }
+
+  .pildora__avance {
+    min-width: 56px;
+    flex: none;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: color-mix(in srgb, currentColor 16%, transparent);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  .pildora__panel {
+    overflow: hidden;
+  }
+
+  .pildora__centrado {
+    display: flex;
+    justify-content: center;
+  }
+
+  .pildora__lista {
+    width: 280px;
+    flex: none;
+    padding: 28px 16px 12px;
+  }
+
+  .pildora__grupo--separado {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--borde);
+  }
+
+  .pildora__titulo {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--tinta-suave);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .pildora__columna {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pildora__fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .pildora__enlace {
+    width: fit-content;
+    color: var(--tinta);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pildora__enlace:hover {
+      color: var(--tinta-suave);
+    }
+  }
+
+  /* El primer grupo es el índice de la página: tipografía de titular. */
+  .pildora__grupo--grande .pildora__enlace {
+    font-size: 1.625rem;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .pildora__grupo--grande .pildora__columna {
+    gap: 8px;
+  }
+
+  .pildora__telon {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    border: 0;
+    background: none;
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pildora__enlace,
+    .pildora__boton {
+      transition: none;
+    }
+  }
+</style>

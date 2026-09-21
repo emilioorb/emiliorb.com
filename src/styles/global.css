@@ -1,0 +1,91 @@
+@import "tailwindcss";
+/* Servida desde el proyecto, no desde Google: sin petición a terceros y sin
+   salto de tipografía al cargar. */
+@import "@fontsource-variable/geist";
+
+@theme {
+  --color-fondo: var(--fondo);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-borde: var(--borde);
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Una sola curva de salida para toda la página. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+:root {
+  color-scheme: light;
+  --alto-cabecera: 80px;
+  /* El mínimo tiene que ser el mismo canalón que usan las secciones (`px-6`,
+     24px): por debajo de `max-w-4xl` la columna no topa y ambos bordes son el
+     borde de pantalla, así que con 20px el sello quedaba 4px a la izquierda
+     del h1. Arriba de ese ancho la columna se centra y ya no se comparan. */
+  --pad-seccion: clamp(24px, 3vw, 40px);
+
+  /* Asimétrico a propósito: con el mismo valor arriba y abajo, el hueco entre
+     dos secciones no pertenece a ninguna. Cargado arriba, el vacío es del
+     capítulo que empieza. */
+  --aire-seccion-top: clamp(3.5rem, 6vw, 5rem);
+  --aire-seccion-bottom: clamp(2.5rem, 4vw, 3.5rem);
+
+  --fondo: #ffffff;
+  --tinta: #0b0b0c;
+  --tinta-suave: #6b6b70;
+  --borde: #e6e6e8;
+}
+
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+  --fondo: #0b0b0c;
+  --tinta: #f4f4f5;
+  --tinta-suave: #8d8d94;
+  --borde: #232326;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --fondo: #0b0b0c;
+    --tinta: #f4f4f5;
+    --tinta-suave: #8d8d94;
+    --borde: #232326;
+  }
+}
+
+@layer base {
+  body {
+    background: var(--fondo);
+    color: var(--tinta);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* No existía ninguna regla de foco de autor: el contorno por defecto del
+     navegador cambia de color con el tema y a veces no se ve. */
+  :focus-visible {
+    outline: 2px solid var(--tinta);
+    outline-offset: 3px;
+  }
+
+  /* La cabecera es fija: sin esto los anclajes aterrizan debajo de ella. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+}
+
+/* Estado de presión para cualquier pulsable. */
+.pulsable {
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 140ms var(--ease-out);
+}
+
+.pulsable:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulsable {
+    transition: none;
+  }
+}

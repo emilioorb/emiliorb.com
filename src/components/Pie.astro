@@ -1,0 +1,83 @@
+---
+import { TEXTOS, type Idioma } from "../i18n/ui";
+import { REDES } from "../data/contenido";
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = TEXTOS[idioma];
+const anio = new Date().getFullYear();
+---
+
+<footer class="pie border-t border-borde">
+  <div class="mx-auto max-w-3xl px-6">
+    <div
+      class="flex flex-col gap-4 pt-8 pb-10 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div class="text-tinta-suave">
+        {/* Más chica que el copyright: es un dato de contexto, no la firma. */}
+        <p class="text-xs">
+          {t.ubicacion} — <time class="tabular-nums" data-hora-local>&nbsp;</time>
+        </p>
+        <p class="mt-1.5 text-sm">© {anio} Emilio Rodríguez</p>
+      </div>
+
+      <ul class="flex items-center gap-5 text-sm">
+      {
+        REDES.map((red) => (
+          <li>
+            <a
+              href={red.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-tinta-suave no-underline transition-colors duration-200 hover:text-tinta"
+            >
+              {red.nombre}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a
+          href={`mailto:${t.contact.correo}`}
+          class="text-tinta-suave no-underline transition-colors duration-200 hover:text-tinta"
+        >
+          {t.nav.contact}
+        </a>
+      </li>
+      </ul>
+    </div>
+  </div>
+
+</footer>
+
+<script define:vars={{ idioma }}>
+  // La hora de Costa Rica, no la de quien mira: le dice a alguien en Madrid o
+  // en Nueva York si estoy despierto antes de escribirme.
+  const nodo = document.querySelector("[data-hora-local]");
+
+  if (nodo) {
+    const formato = new Intl.DateTimeFormat(idioma, {
+      timeZone: "America/Costa_Rica",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+
+    const pintar = () => {
+      const ahora = new Date();
+      nodo.textContent = formato.format(ahora);
+      nodo.setAttribute("datetime", ahora.toISOString());
+    };
+
+    pintar();
+    // Al minuto en punto, y de ahí cada minuto: sin esto el reloj se atrasaría
+    // hasta medio minuto respecto del cambio real.
+    setTimeout(() => {
+      pintar();
+      setInterval(pintar, 60_000);
+    }, (60 - new Date().getSeconds()) * 1000);
+  }
+</script>
+

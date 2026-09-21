@@ -1,0 +1,113 @@
+---
+import "../styles/global.css";
+import ScrollSuave from "../components/ScrollSuave.astro";
+import FondoEstrellas from "../components/islas/FondoEstrellas";
+import Encabezado from "../components/Encabezado.astro";
+import CambioTema from "../components/CambioTema.astro";
+import Pie from "../components/Pie.astro";
+import { TEXTOS, rutaDe, type Idioma } from "../i18n/ui";
+import { REDES, TRABAJO, enIdioma } from "../data/contenido";
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = TEXTOS[idioma];
+const otro: Idioma = idioma === "es" ? "en" : "es";
+const canonica = new URL(rutaDe(idioma), Astro.site).href;
+
+// Pendiente de diseñar: 1200x630. Hasta que exista el archivo, las etiquetas
+// apuntan a una imagen que no resuelve.
+const imagenSocial = new URL("/og.png", Astro.site).href;
+
+const LOCALES = { es: "es_CR", en: "en_US" } as const;
+
+/** `sameAs` sale de REDES para no duplicar las URLs de los perfiles. */
+const personaJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Emilio Rodríguez",
+  url: new URL(rutaDe(idioma), Astro.site).href,
+  // El cargo sale del puesto vigente, no del antetítulo: ese incluye la
+  // empresa, que ya va aparte en `worksFor`.
+  jobTitle: enIdioma(TRABAJO[0].cargo, idioma),
+  worksFor: {
+    "@type": "Organization",
+    name: "Arclo Systems",
+    url: "https://arclosystems.com",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "San José",
+    addressCountry: "CR",
+  },
+  sameAs: REDES.map((red) => red.href),
+};
+---
+
+<!doctype html>
+<html lang={idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{t.meta.titulo}</title>
+    <meta name="description" content={t.meta.descripcion} />
+    <link rel="canonical" href={canonica} />
+    <link rel="alternate" hreflang="es" href={new URL(rutaDe("es"), Astro.site).href} />
+    <link rel="alternate" hreflang="en" href={new URL(rutaDe("en"), Astro.site).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(rutaDe("es"), Astro.site).href} />
+    <meta property="og:title" content={t.meta.titulo} />
+    <meta property="og:description" content={t.meta.descripcion} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:site_name" content="Emilio Rodríguez" />
+    <meta property="og:locale" content={LOCALES[idioma]} />
+    <meta property="og:locale:alternate" content={LOCALES[otro]} />
+    <meta property="og:image" content={imagenSocial} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@_emiliojrb" />
+    <meta name="twitter:creator" content="@_emiliojrb" />
+    <meta name="twitter:image" content={imagenSocial} />
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(personaJsonLd)}
+    />
+    <meta name="theme-color" content="#ffffff" />
+
+    {/* Sin diferir: el atributo tiene que existir ANTES del primer pintado o
+        la página parpadea en claro antes de pasar a oscuro. */}
+    <script is:inline>
+      (() => {
+        const raiz = document.documentElement;
+        let elegido = null;
+        try {
+          elegido = localStorage.getItem("tema");
+        } catch {}
+        const oscuro =
+          elegido === "oscuro" ||
+          (elegido !== "claro" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        raiz.dataset.tema = oscuro ? "oscuro" : "claro";
+        const barra = document.querySelector('meta[name="theme-color"]');
+        if (barra) barra.content = oscuro ? "#0b0b0c" : "#ffffff";
+      })();
+    </script>
+  </head>
+
+  <body class="font-sans antialiased">
+    <ScrollSuave />
+    {/* `client:idle`: es decoración, puede esperar a que el hilo se libere. */}
+    <FondoEstrellas client:idle />
+    <Encabezado idioma={idioma} otro={otro} />
+    <main>
+      <slot />
+    </main>
+    <Pie idioma={idioma} />
+    <CambioTema idioma={idioma} />
+  </body>
+</html>

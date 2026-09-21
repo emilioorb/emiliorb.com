@@ -1,0 +1,251 @@
+---
+import Base from "../layouts/Base.astro";
+import CintaTexto from "./islas/CintaTexto";
+import TitularSwap from "./islas/TitularSwap";
+import BajadaPruebas from "./islas/BajadaPruebas";
+import { TEXTOS, type Idioma } from "../i18n/ui";
+import {
+  TRABAJO,
+  PROYECTOS,
+  ESTUDIOS,
+  REDES,
+  enIdioma,
+} from "../data/contenido";
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = TEXTOS[idioma];
+
+// El intervalo se repetía idéntico tres veces seguidas (112px arriba y abajo
+// de cada sección, 224px entre una y otra), y sin variación no hay ritmo:
+// el ojo no distingue dónde termina un bloque. Fluido y más corto.
+// Superponer dos `pt-` sobre el mismo elemento deja la pelea al orden del CSS
+// generado, no al de las clases: hero y contacto llevan la suya completa.
+// `max-w-4xl` y no `3xl`: el h1 a 64px llenaba el 90% de la medida. La prosa
+// no se estira con la columna, se acota aparte.
+const columna = "mx-auto max-w-4xl px-6";
+const seccion = `${columna} pt-[var(--aire-seccion-top)] pb-[var(--aire-seccion-bottom)]`;
+const seccionHero = `${columna} pt-32 pb-[var(--aire-seccion-bottom)] sm:pt-40`;
+const seccionCierre = `${columna} pt-[clamp(4.5rem,10vw,7rem)] pb-[clamp(3.5rem,7vw,5rem)]`;
+// Etiqueta subordinada: cuelga del h1, no encabeza nada.
+const antetitulo =
+  "text-xs font-medium tracking-[0.12em] text-tinta-suave uppercase";
+
+// Encabezado de sección. Antes compartía estilo con el antetítulo y era el
+// elemento más liviano de la página haciendo de divisoria entre dos listas.
+const encabezado =
+  "text-[clamp(1.5rem,3vw,1.75rem)] font-medium tracking-tight text-tinta";
+
+// Cada público entra por donde ya está: LinkedIn quien recluta, GitHub quien
+// viene a ver código. El correo queda como puerta principal, aparte.
+// Selección explícita, no un orden sobre `REDES`: así agregar una red nueva
+// la suma al pie sin colarla en el cierre.
+const PUERTAS_CONTACTO = ["LinkedIn", "GitHub"];
+const REDES_CONTACTO = PUERTAS_CONTACTO.map((nombre) =>
+  REDES.find((red) => red.nombre === nombre),
+).filter((red) => red !== undefined);
+---
+
+<Base idioma={idioma}>
+  <section id="inicio" class={seccionHero}>
+    <p class={antetitulo}>{t.hero.rol}</p>
+    {/* Un solo peso, como arclo y Kodi: el contraste del titular va por
+        color, no por grosor. El trabajo de pesos vive fuera del h1. */}
+    <h1
+      class="mt-5 text-[clamp(2rem,6vw,4rem)] leading-[1.1] font-medium tracking-[-0.03em] text-balance"
+    >
+      <span class="block text-tinta-suave">{t.hero.titular.suave}</span>
+      {/* Los dos renglones son bloques: sin este espacio el lector de pantalla
+          lee "softwareque" de corrido. */}{" "}
+      <span class="block"><TitularSwap texto={t.hero.titular.fuerte} client:visible /></span>
+    </h1>
+    <BajadaPruebas texto={t.hero.bajada} pruebas={t.hero.pruebas} client:visible />
+
+    <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+      <a
+        href="#projects"
+        class="pulsable rounded-full bg-tinta px-5 py-2.5 text-sm font-medium text-fondo no-underline"
+      >
+        {t.hero.cta.principal}
+      </a>
+      <a
+        href={`mailto:${t.contact.correo}`}
+        class="text-sm font-medium underline decoration-borde underline-offset-4 transition-colors duration-200 hover:decoration-tinta"
+      >
+        {t.hero.cta.secundario}
+      </a>
+    </div>
+  </section>
+
+  {/* `client:idle` y no `client:visible`: la cinta está pegada al hero, casi en
+      el pliegue, y con `visible` reservaba 224px en blanco hasta que el lector
+      bajara hasta ella. */}
+  <CintaTexto frase={t.cinta} client:idle />
+
+  <section id="work" class={seccion}>
+    <h2 class={encabezado}>{t.work.titulo}</h2>
+    <ol class="mt-12 divide-y divide-borde border-y border-borde">
+      {
+        TRABAJO.map((puesto) => (
+          <li class="flex flex-col gap-1 py-5 sm:flex-row sm:gap-8">
+            <p class="shrink-0 text-sm text-tinta-suave tabular-nums sm:w-28">
+              {puesto.desde} — {puesto.hasta ?? t.work.presente}
+            </p>
+            <div>
+              <p class="font-medium">
+                {enIdioma(puesto.cargo, idioma)}
+                <span class="text-tinta-suave"> · </span>
+                {
+                  puesto.href ? (
+                    <a
+                      href={puesto.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-tinta-suave underline decoration-borde underline-offset-4 transition-colors duration-200 hover:text-tinta hover:decoration-tinta"
+                    >
+                      {puesto.empresa}
+                    </a>
+                  ) : (
+                    <span class="text-tinta-suave">{puesto.empresa}</span>
+                  )
+                }
+              </p>
+              <p class="mt-2 max-w-xl text-sm leading-relaxed text-tinta-suave">
+                {enIdioma(puesto.detalle, idioma)}
+              </p>
+              <p class="mt-3 text-xs text-tinta-suave">{puesto.stack.join(" · ")}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-12 flex flex-col gap-1 sm:flex-row sm:gap-8">
+      <p class="shrink-0 text-sm text-tinta-suave tabular-nums sm:w-28">
+        {ESTUDIOS.desde} — {ESTUDIOS.hasta}
+      </p>
+      <div>
+        <p class="text-sm font-medium">
+          <a
+            href={ESTUDIOS.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline decoration-borde underline-offset-4 transition-colors duration-200 hover:decoration-tinta"
+          >
+            {ESTUDIOS.institucion}
+          </a>
+        </p>
+        <p class="mt-1 text-sm leading-relaxed text-tinta-suave">
+          {enIdioma(ESTUDIOS.titulo, idioma)}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class={seccion}>
+    <h2 class={encabezado}>{t.projects.titulo}</h2>
+    <ol class="mt-12 divide-y divide-borde border-y border-borde">
+      {
+        PROYECTOS.map((proyecto) => {
+          const Fila = proyecto.href ? "a" : "div";
+          return (
+            <li>
+              <Fila
+                {...(proyecto.href
+                  ? {
+                      href: proyecto.href,
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                      "aria-label": `${proyecto.nombre} — ${t.projects.visitar}`,
+                    }
+                  : {})}
+                class="group flex flex-col gap-1 py-5 no-underline sm:flex-row sm:gap-8"
+              >
+                <p class="shrink-0 text-sm text-tinta-suave tabular-nums sm:w-28">
+                  {proyecto.anio}
+                </p>
+                <div>
+                  <p class="flex items-center gap-1.5 font-medium transition-colors duration-200 group-hover:text-tinta-suave">
+                    {proyecto.nombre}
+                    {proyecto.href && (
+                      <svg
+                        class="h-3.5 w-3.5 shrink-0 text-tinta-suave"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M7 17 17 7M7 7h10v10" />
+                      </svg>
+                    )}
+                  </p>
+                  <p class="mt-2 max-w-xl text-sm leading-relaxed text-tinta-suave">
+                    {enIdioma(proyecto.detalle, idioma)}
+                  </p>
+                  {proyecto.stack.length > 0 && (
+                    <p class="mt-3 text-xs text-tinta-suave">
+                      {proyecto.stack.join(" · ")}
+                    </p>
+                  )}
+                </div>
+              </Fila>
+            </li>
+          );
+        })
+      }
+    </ol>
+    <p class="mt-6 text-sm text-tinta-suave">{t.projects.masPronto}</p>
+  </section>
+
+  {/* Experiencia y Proyectos son hermanas y van juntas; antes del cierre hay
+      una pausa mayor, a propósito. */}
+  <section id="contact" class={seccionCierre}>
+    <h2 class={encabezado}>{t.contact.titulo}</h2>
+    {/* El cierre es el segundo momento tipográfico de la página: a 18px
+        competía con cualquier párrafo del CV. */}
+    <p
+      class="mt-6 text-[clamp(1.75rem,4vw,2.5rem)] leading-[1.15] font-medium tracking-[-0.02em] text-balance"
+    >
+      {t.contact.bajada}
+    </p>
+
+    <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+      <a
+        href={`mailto:${t.contact.correo}`}
+        class="pulsable rounded-full bg-tinta px-5 py-2.5 text-sm font-medium text-fondo no-underline"
+      >
+        {t.contact.escribir}
+      </a>
+      {
+        REDES_CONTACTO.map((red) => (
+          <a
+            href={red.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm font-medium underline decoration-borde underline-offset-4 transition-colors duration-200 hover:decoration-tinta"
+          >
+            {red.nombre}
+          </a>
+        ))
+      }
+    </div>
+
+    {/* La dirección visible además del `mailto`: en escritorio sin cliente
+        configurado el enlace no hace nada y hay que poder copiarla. */}
+    <p class="mt-6 text-sm text-tinta-suave">
+      <a
+        href={`mailto:${t.contact.correo}`}
+        class="underline decoration-borde underline-offset-4 transition-colors duration-200 hover:decoration-tinta"
+      >
+        {t.contact.correo}
+      </a>
+      <span class="mt-1 block">{t.contact.respuesta}</span>
+    </p>
+  </section>
+</Base>

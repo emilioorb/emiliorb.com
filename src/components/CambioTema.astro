@@ -1,0 +1,74 @@
+---
+import { TEXTOS, type Idioma } from "../i18n/ui";
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = TEXTOS[idioma];
+
+// Los dos íconos se dibujan siempre y el CSS muestra el que toca: así el botón
+// sale correcto en el primer pintado, sin esperar a que corra JavaScript.
+---
+
+<button
+  type="button"
+  data-tema-boton
+  aria-pressed="false"
+  class="fixed right-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-50 grid h-11 w-11 place-items-center"
+>
+  <span
+    class="grid h-10 w-10 place-items-center rounded-full border border-borde bg-fondo opacity-75 shadow-[0_4px_12px_rgb(0_0_0/0.08)] transition-[opacity,box-shadow,transform] duration-200 ease-out group-active:scale-97 hover:opacity-100"
+  >
+    <svg class="sol hidden h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+    </svg>
+    <svg class="luna h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+    </svg>
+  </span>
+  <span class="sr-only" data-tema-texto>{t.tema.oscuro}</span>
+</button>
+
+<style>
+  /* De día se ofrece la luna y de noche el sol: el ícono es a dónde vas, no
+     dónde estás. */
+  :global(:root[data-tema="oscuro"]) .sol {
+    display: block;
+  }
+  :global(:root[data-tema="oscuro"]) .luna {
+    display: none;
+  }
+</style>
+
+<script define:vars={{ claro: t.tema.claro, oscuro: t.tema.oscuro }}>
+  const boton = document.querySelector("[data-tema-boton]");
+  const texto = document.querySelector("[data-tema-texto]");
+  const raiz = document.documentElement;
+
+  if (boton && texto) {
+    const rotular = () => {
+      const esOscuro = raiz.dataset.tema === "oscuro";
+      boton.setAttribute("aria-pressed", String(esOscuro));
+      texto.textContent = esOscuro ? claro : oscuro;
+      // Sin esto el teléfono sigue mostrando la barra clara sobre página oscura.
+      const barra = document.querySelector('meta[name="theme-color"]');
+      if (barra) barra.content = esOscuro ? "#0b0b0c" : "#ffffff";
+    };
+
+    boton.addEventListener("click", () => {
+      const siguiente = raiz.dataset.tema === "oscuro" ? "claro" : "oscuro";
+      raiz.dataset.tema = siguiente;
+      try {
+        localStorage.setItem("tema", siguiente);
+      } catch {
+        // Sin almacenamiento el cambio vale para esta visita y nada más.
+      }
+      rotular();
+    });
+
+    rotular();
+  }
+</script>

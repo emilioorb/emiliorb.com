@@ -1,0 +1,58 @@
+---
+/**
+ * Scroll suavizado, portado de la landing de Kodi.
+ *
+ * Lenis mueve el scroll real de la ventana, así que `window.scrollY` y el
+ * evento `scroll` siguen funcionando igual para cualquier otra cosa.
+ */
+---
+
+<script>
+  import Lenis from "lenis";
+
+  // Quien pidió menos movimiento se queda con el scroll del sistema:
+  // suavizarlo es justo el tipo de movimiento que esa preferencia apaga.
+  if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+    const lenis = new Lenis({
+      duration: 1.7,
+      // Frena al final sin rebotar.
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      // El táctil NO se suaviza: el dedo ya arrastra la página, y agregarle
+      // inercia artificial se siente como si el teléfono estuviera trabado.
+      syncTouch: false,
+    });
+
+    const latido = (tiempo: number) => {
+      lenis.raf(tiempo);
+      requestAnimationFrame(latido);
+    };
+    requestAnimationFrame(latido);
+
+    // Los anclajes viajan con el mismo deslizamiento. Por delegación y no
+    // enlace por enlace, para que también valga para lo que se pinte después.
+    // Dónde frena lo dice el `scroll-margin-top` ya resuelto del destino.
+    document.addEventListener("click", (evento) => {
+      const objetivo = evento.target;
+      if (!(objetivo instanceof Element)) return;
+      const enlace = objetivo.closest<HTMLAnchorElement>("a[href]");
+      if (!enlace) return;
+
+      const url = new URL(enlace.href, location.href);
+      if (url.origin !== location.origin) return;
+      if (url.pathname !== location.pathname || !url.hash) return;
+
+      const nodo = document.querySelector<HTMLElement>(url.hash);
+      if (!nodo) return;
+
+      evento.preventDefault();
+      const respiro = parseFloat(getComputedStyle(nodo).scrollMarginTop) || 0;
+      lenis.scrollTo(nodo, { offset: -respiro });
+
+      // `preventDefault` cancela también el traslado del foco, así que se mueve
+      // a mano; sin `tabindex` el destino no puede recibirlo.
+      if (!nodo.hasAttribute("tabindex")) nodo.setAttribute("tabindex", "-1");
+      nodo.focus({ preventScroll: true });
+    });
+  }
+</script>
