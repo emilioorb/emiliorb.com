@@ -94,9 +94,9 @@ como `REACTBITS_LICENSE_KEY`.
 
 ## Antes de publicar
 
-- [ ] `public/og.png` de 1200×630 (las etiquetas sociales ya apuntan ahí)
+- [x] `public/og.png` (1920×1080; las etiquetas sociales apuntan ahí)
 - [ ] Favicon definitivo
-- [ ] Repositorio git propio: hoy la carpeta no lo es
+- [x] Repositorio git propio: [emilioorb/emiliorb.com](https://github.com/emilioorb/emiliorb.com)
 
 ## Licencia
 
