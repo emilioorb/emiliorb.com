@@ -5,6 +5,16 @@ import tailwindcss from "@tailwindcss/vite";
 
 import sitemap from "@astrojs/sitemap";
 
+/**
+ * Cuándo cambió por última vez el contenido del portafolio, en hora de Costa Rica.
+ *
+ * Va declarada y NO `new Date()`: con la fecha del build las dos URLs dirían
+ * "hoy" en cada despliegue aunque no se haya tocado una coma, y una señal que
+ * siempre dice lo mismo es una señal que Google deja de mirar. Al editar el
+ * contenido de verdad, mover esta fecha.
+ */
+const ULTIMA_ACTUALIZACION = new Date("2026-09-20T00:00:00-06:00");
+
 export default defineConfig({
   site: "https://emiliorb.com",
 
@@ -28,6 +38,8 @@ export default defineConfig({
         defaultLocale: "es",
         locales: { es: "es", en: "en" },
       },
+      // Sin `lastmod` el sitemap no aporta nada que la propia URL no diga ya.
+      serialize: (item) => ({ ...item, lastmod: ULTIMA_ACTUALIZACION.toISOString() }),
     }),
   ],
   vite: { plugins: [tailwindcss()] },
