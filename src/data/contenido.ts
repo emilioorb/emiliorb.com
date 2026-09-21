@@ -120,10 +120,10 @@ export const PROYECTOS_PERSONALES: readonly Proyecto[] = [
     href: null,
     anio: "2026",
     detalle: {
-      es: "En construcción. Control de finanzas completo, en tres niveles: personal, en pareja y familiar.",
-      en: "In progress. Complete finance tracking on three levels: personal, shared with a partner, and family.",
+      es: "En construcción. Control de finanzas completo, en tres niveles: personal, en pareja y familiar. Hoy es una PWA con integración a iOS y Android para que los movimientos se registren solos; la app nativa viene después.",
+      en: "In progress. Complete finance tracking on three levels: personal, shared with a partner, and family. Today a PWA with iOS and Android integrations so transactions record themselves; the native app comes later.",
     },
-    stack: ["React Native", "NestJS", "PostgreSQL"],
+    stack: ["Next.js", "React", "PostgreSQL", "PWA"],
   },
   {
     nombre: "emiliorb.com",
