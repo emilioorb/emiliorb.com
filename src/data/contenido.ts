@@ -114,14 +114,12 @@ export const PROYECTOS: readonly Proyecto[] = [
  */
 export const PROYECTOS_PERSONALES: readonly Proyecto[] = [
   {
-    // Nombre de trabajo: cambia cuando salga.
-    nombre: "Tape",
-    // Sin enlace hasta que salga.
-    href: null,
+    nombre: "T-Ledger",
+    href: "https://t-ledger.vercel.app/",
     anio: "2026",
     detalle: {
-      es: "En construcción. Control de finanzas completo, en tres niveles: personal, en pareja y familiar. Hoy es una PWA con integración a iOS y Android para que los movimientos se registren solos; la app nativa viene después.",
-      en: "In progress. Complete finance tracking on three levels: personal, shared with a partner, and family. Today a PWA with iOS and Android integrations so transactions record themselves; the native app comes later.",
+      es: "Contabilidad de partida doble completa, en tres niveles: personal, en pareja y familiar. Hoy es una PWA con integración a iOS y Android para que los movimientos se registren solos; la app nativa viene después.",
+      en: "Complete double-entry accounting on three levels: personal, shared with a partner, and family. Today a PWA with iOS and Android integrations so transactions record themselves; the native app comes later.",
     },
     stack: ["Next.js", "React", "PostgreSQL", "PWA"],
   },
