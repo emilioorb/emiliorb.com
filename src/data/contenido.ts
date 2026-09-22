@@ -118,10 +118,10 @@ export const PROYECTOS_PERSONALES: readonly Proyecto[] = [
     href: "https://t-ledger.vercel.app/",
     anio: "2026",
     detalle: {
-      es: "Contabilidad de partida doble completa, en tres niveles: personal, en pareja y familiar. Hoy es una PWA con integración a iOS y Android para que los movimientos se registren solos; la app nativa viene después.",
-      en: "Complete double-entry accounting on three levels: personal, shared with a partner, and family. Today a PWA with iOS and Android integrations so transactions record themselves; the native app comes later.",
+      es: "Contabilidad de partida doble de verdad para tu libro personal, el de pareja y el de la familia. Presupuesto, deudas, metas e inversiones que cuadran, y cada cifra se rastrea hasta su origen.",
+      en: "Real double-entry accounting for your personal, couple and family ledgers. Budgets, debts, goals and investments that balance, and every figure traces back to its source.",
     },
-    stack: ["Next.js", "React", "PostgreSQL", "PWA"],
+    stack: ["React", "NestJS", "PostgreSQL"],
   },
   {
     nombre: "emiliorb.com",
