@@ -135,6 +135,32 @@ export const PROYECTOS_PERSONALES: readonly Proyecto[] = [
   },
 ].sort((a, b) => Number(b.anio) - Number(a.anio));
 
+export interface Nota {
+  readonly medio: string;
+  /** En el idioma original de la nota: traducir un titular ajeno sería inventarlo. */
+  readonly titular: string;
+  readonly href: string;
+  /** ISO 8601; ordena y alimenta el `<time>`. */
+  readonly fecha: string;
+}
+
+export const PRENSA: readonly Nota[] = [
+  {
+    medio: "El Financiero",
+    titular:
+      "Esta app puede ayudarle en sus exámenes de admisión a universidades, de manejo y del MEP.",
+    href: "https://www.elfinancierocr.com/tecnologia/esta-app-puede-ayudarle-en-sus-examenes-de/3PFRLCUYUZAAHJ3X43TXCPDHRU/story/",
+    fecha: "2026-10-02",
+  },
+  {
+    medio: "NTG Costa Rica",
+    titular:
+      "Talento de Tilarán crea Kodi, una aplicación que busca cambiar la forma de estudiar para los exámenes.",
+    href: "https://ntgcostarica.com/talento-de-tilaran-crea-kodi-una-aplicacion-que-busca-cambiar-la-forma-de-estudiar-para-los-examenes/",
+    fecha: "2026-09-30",
+  },
+].sort((a, b) => b.fecha.localeCompare(a.fecha));
+
 export interface Estudio {
   readonly institucion: string;
   readonly href: string;

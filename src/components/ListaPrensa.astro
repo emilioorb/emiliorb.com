@@ -1,0 +1,65 @@
+---
+import type { Nota } from "../data/contenido";
+import type { Idioma } from "../i18n/ui";
+
+interface Props {
+  notas: readonly Nota[];
+  idioma: Idioma;
+  leer: string;
+}
+
+const { notas, idioma, leer } = Astro.props;
+
+// Mediodía UTC: a medianoche, la zona horaria del build puede correr la fecha
+// al día anterior.
+const formatoFecha = new Intl.DateTimeFormat(idioma === "es" ? "es-CR" : "en-US", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const fechaLegible = (iso: string) => formatoFecha.format(new Date(`${iso}T12:00:00Z`));
+---
+
+<ol class="mt-12 divide-y divide-borde border-y border-borde">
+  {
+    notas.map((nota) => (
+      <li>
+        <a
+          href={nota.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${nota.titular} — ${nota.medio}. ${leer}`}
+          class="group flex flex-col gap-1 py-5 no-underline sm:flex-row sm:gap-8"
+        >
+          <time datetime={nota.fecha} class="shrink-0 text-sm text-tinta-suave tabular-nums sm:w-28">
+            {fechaLegible(nota.fecha)}
+          </time>
+          <div>
+            <p class="flex items-center gap-1.5 text-sm text-tinta-suave">
+              {nota.medio}
+              <svg
+                class="h-3.5 w-3.5 shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+            </p>
+            <p
+              lang="es"
+              class="mt-2 max-w-xl font-medium text-balance transition-colors duration-200 group-hover:text-tinta-suave"
+            >
+              {nota.titular}
+            </p>
+          </div>
+        </a>
+      </li>
+    ))
+  }
+</ol>

@@ -4,11 +4,13 @@ import CintaTexto from "./islas/CintaTexto";
 import TitularSwap from "./islas/TitularSwap";
 import BajadaPruebas from "./islas/BajadaPruebas";
 import ListaProyectos from "./ListaProyectos.astro";
+import ListaPrensa from "./ListaPrensa.astro";
 import { TEXTOS, type Idioma } from "../i18n/ui";
 import {
   TRABAJO,
   PROYECTOS,
   PROYECTOS_PERSONALES,
+  PRENSA,
   ESTUDIOS,
   REDES,
   enIdioma,
@@ -160,6 +162,11 @@ const REDES_CONTACTO = PUERTAS_CONTACTO.map((nombre) =>
       idioma={idioma}
       visitar={t.projects.visitar}
     />
+  </section>
+
+  <section id="press" class={seccion}>
+    <h2 class={encabezado}>{t.prensa.titulo}</h2>
+    <ListaPrensa notas={PRENSA} idioma={idioma} leer={t.prensa.leer} />
   </section>
 
   {/* Experiencia y Proyectos son hermanas y van juntas; antes del cierre hay

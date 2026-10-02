@@ -8,7 +8,13 @@ export const rutaDe = (idioma: Idioma, hash = "") =>
   `${idioma === POR_DEFECTO ? "/" : "/en/"}${hash}`;
 
 interface Textos {
-  readonly nav: { inicio: string; work: string; projects: string; contact: string };
+  readonly nav: {
+    inicio: string;
+    work: string;
+    projects: string;
+    prensa: string;
+    contact: string;
+  };
   readonly meta: { titulo: string; descripcion: string };
   readonly hero: {
     rol: string;
@@ -22,6 +28,7 @@ interface Textos {
   readonly work: { titulo: string; presente: string; estudios: string };
   readonly projects: { titulo: string; visitar: string; masPronto: string };
   readonly personales: { titulo: string };
+  readonly prensa: { titulo: string; leer: string };
   readonly contact: {
     titulo: string;
     bajada: string;
@@ -41,7 +48,7 @@ interface Textos {
 
 export const TEXTOS: Record<Idioma, Textos> = {
   es: {
-    nav: { inicio: "Inicio", work: "Experiencia", projects: "Proyectos", contact: "Contacto" },
+    nav: { inicio: "Inicio", work: "Experiencia", projects: "Proyectos", prensa: "Prensa", contact: "Contacto" },
     meta: {
       titulo: "Emilio Rodríguez — Software a medida desde Costa Rica",
       descripcion:
@@ -73,6 +80,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
         "Estamos construyendo otros proyectos, propios y para clientes, que pronto salen a la luz.",
     },
     personales: { titulo: "Proyectos personales" },
+    prensa: { titulo: "En la prensa", leer: "Leer la nota" },
     contact: {
       titulo: "Contacto",
       bajada: "¿En qué andás?",
@@ -92,7 +100,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
     otroIdioma: "English",
   },
   en: {
-    nav: { inicio: "Home", work: "Work", projects: "Projects", contact: "Contact" },
+    nav: { inicio: "Home", work: "Work", projects: "Projects", prensa: "Press", contact: "Contact" },
     meta: {
       titulo: "Emilio Rodríguez — Custom software from Costa Rica",
       descripcion:
@@ -124,6 +132,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
         "We are building other projects, our own and for clients, coming out soon.",
     },
     personales: { titulo: "Personal projects" },
+    prensa: { titulo: "In the press", leer: "Read the article" },
     contact: {
       titulo: "Contact",
       bajada: "What are you working on?",
