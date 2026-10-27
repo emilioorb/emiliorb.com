@@ -1,14 +1,15 @@
 ---
 import MenuPildora from "./islas/MenuPildora";
-import { TEXTOS, rutaDe, type Idioma } from "../i18n/ui";
+import { TEXTOS, RUTAS_INVESTIGACION, rutaDe, type Idioma } from "../i18n/ui";
 import { REDES } from "../data/contenido";
 
 interface Props {
   idioma: Idioma;
-  otro: Idioma;
+  /** La página actual en el otro idioma, para no mandar siempre a la portada. */
+  rutaOtro: string;
 }
 
-const { idioma, otro } = Astro.props;
+const { idioma, rutaOtro } = Astro.props;
 const t = TEXTOS[idioma];
 const base = rutaDe(idioma);
 
@@ -24,13 +25,14 @@ const MENU = [
       { texto: t.nav.work, href: `${base}#work` },
       { texto: t.nav.projects, href: `${base}#projects` },
       { texto: t.nav.prensa, href: `${base}#press` },
+      { texto: t.nav.investigacion, href: RUTAS_INVESTIGACION[idioma] },
       { texto: t.nav.contact, href: `${base}#contact` },
     ],
   },
   {
     titulo: t.idioma,
     enFila: true,
-    enlaces: [{ texto: t.otroIdioma, href: rutaDe(otro) }],
+    enlaces: [{ texto: t.otroIdioma, href: rutaOtro }],
   },
   {
     titulo: t.redes,

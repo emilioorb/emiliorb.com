@@ -1,3 +1,5 @@
+import type { EstadoPaper } from "../data/contenido";
+
 export const IDIOMAS = ["es", "en"] as const;
 export type Idioma = (typeof IDIOMAS)[number];
 
@@ -7,12 +9,24 @@ export const POR_DEFECTO: Idioma = "es";
 export const rutaDe = (idioma: Idioma, hash = "") =>
   `${idioma === POR_DEFECTO ? "/" : "/en/"}${hash}`;
 
+/** Cada idioma con su propio slug: "/en/investigacion" no se lee en inglés. */
+export const RUTAS_INVESTIGACION: Record<Idioma, string> = {
+  es: "/investigacion",
+  en: "/en/research",
+};
+
+export const rutasPaper = (slug: string): Record<Idioma, string> => ({
+  es: `${RUTAS_INVESTIGACION.es}/${slug}`,
+  en: `${RUTAS_INVESTIGACION.en}/${slug}`,
+});
+
 interface Textos {
   readonly nav: {
     inicio: string;
     work: string;
     projects: string;
     prensa: string;
+    investigacion: string;
     contact: string;
   };
   readonly meta: { titulo: string; descripcion: string };
@@ -29,6 +43,19 @@ interface Textos {
   readonly projects: { titulo: string; visitar: string; masPronto: string };
   readonly personales: { titulo: string };
   readonly prensa: { titulo: string; leer: string };
+  readonly investigacion: {
+    meta: { titulo: string; descripcion: string };
+    titulo: string;
+    bajada: string;
+    estados: Record<EstadoPaper, string>;
+    tituloProvisional: string;
+    proyecto: string;
+    tesis: string;
+    aportes: string;
+    destinos: string;
+    volver: string;
+    leer: string;
+  };
   readonly contact: {
     titulo: string;
     bajada: string;
@@ -48,7 +75,7 @@ interface Textos {
 
 export const TEXTOS: Record<Idioma, Textos> = {
   es: {
-    nav: { inicio: "Inicio", work: "Experiencia", projects: "Proyectos", prensa: "Prensa", contact: "Contacto" },
+    nav: { inicio: "Inicio", work: "Experiencia", projects: "Proyectos", prensa: "Prensa", investigacion: "Investigación", contact: "Contacto" },
     meta: {
       titulo: "Emilio Rodríguez — Software a medida desde Costa Rica",
       descripcion:
@@ -81,6 +108,24 @@ export const TEXTOS: Record<Idioma, Textos> = {
     },
     personales: { titulo: "Proyectos personales" },
     prensa: { titulo: "En la prensa", leer: "Leer la nota" },
+    investigacion: {
+      meta: {
+        titulo: "Investigación — Emilio Rodríguez",
+        descripcion:
+          "Papers que salen de mis proyectos: qué hipótesis ponen a prueba, qué aportan y dónde se publican.",
+      },
+      titulo: "Investigación",
+      bajada:
+        "Algunos proyectos dejan preguntas que vale la pena medir. Acá van los papers que salen de ellos, con su estado real.",
+      estados: { preparacion: "En preparación", preprint: "Preprint", publicado: "Publicado" },
+      tituloProvisional: "Título de trabajo",
+      proyecto: "Proyecto",
+      tesis: "Hipótesis",
+      aportes: "Aportes",
+      destinos: "Dónde se publicaría",
+      volver: "Toda la investigación",
+      leer: "Ver el paper",
+    },
     contact: {
       titulo: "Contacto",
       bajada: "¿En qué andás?",
@@ -93,14 +138,14 @@ export const TEXTOS: Record<Idioma, Textos> = {
       oscuro: "Cambiar a modo oscuro",
       cerrar: "Cerrar",
     },
-    cinta: "ARQUITECTURA · CÓDIGO · PRODUCTO · ENTREGA · ",
+    cinta: "ARQUITECTURA · CÓDIGO · AUTOMATIZACIÓN · PRODUCTO · ENTREGA · ",
     idioma: "Idioma",
     redes: "Redes",
     ubicacion: "San José, Costa Rica",
     otroIdioma: "English",
   },
   en: {
-    nav: { inicio: "Home", work: "Work", projects: "Projects", prensa: "Press", contact: "Contact" },
+    nav: { inicio: "Home", work: "Work", projects: "Projects", prensa: "Press", investigacion: "Research", contact: "Contact" },
     meta: {
       titulo: "Emilio Rodríguez — Custom software from Costa Rica",
       descripcion:
@@ -133,6 +178,24 @@ export const TEXTOS: Record<Idioma, Textos> = {
     },
     personales: { titulo: "Personal projects" },
     prensa: { titulo: "In the press", leer: "Read the article" },
+    investigacion: {
+      meta: {
+        titulo: "Research — Emilio Rodríguez",
+        descripcion:
+          "Papers that come out of my projects: the hypothesis each one tests, what it contributes and where it is published.",
+      },
+      titulo: "Research",
+      bajada:
+        "Some projects raise questions worth measuring. These are the papers that come out of them, with their actual status.",
+      estados: { preparacion: "In preparation", preprint: "Preprint", publicado: "Published" },
+      tituloProvisional: "Working title",
+      proyecto: "Project",
+      tesis: "Hypothesis",
+      aportes: "Contributions",
+      destinos: "Where it would be published",
+      volver: "All research",
+      leer: "View the paper",
+    },
     contact: {
       titulo: "Contact",
       bajada: "What are you working on?",
@@ -145,7 +208,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       oscuro: "Switch to dark mode",
       cerrar: "Close",
     },
-    cinta: "ARCHITECTURE · CODE · PRODUCT · DELIVERY · ",
+    cinta: "ARCHITECTURE · CODE · AUTOMATION · PRODUCT · DELIVERY · ",
     idioma: "Language",
     redes: "Social",
     ubicacion: "San José, Costa Rica",

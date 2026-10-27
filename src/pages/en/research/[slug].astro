@@ -1,0 +1,12 @@
+---
+import type { GetStaticPaths } from "astro";
+import PaginaPaper from "../../../components/PaginaPaper.astro";
+import { INVESTIGACION } from "../../../data/contenido";
+
+export const getStaticPaths = (() =>
+  INVESTIGACION.map((paper) => ({ params: { slug: paper.slug }, props: { paper } }))) satisfies GetStaticPaths;
+
+const { paper } = Astro.props;
+---
+
+<PaginaPaper idioma="en" paper={paper} />

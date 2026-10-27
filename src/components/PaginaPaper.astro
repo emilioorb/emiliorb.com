@@ -1,0 +1,57 @@
+---
+import Base from "../layouts/Base.astro";
+import { TEXTOS, RUTAS_INVESTIGACION, rutasPaper, type Idioma } from "../i18n/ui";
+import { enIdioma, type Paper } from "../data/contenido";
+
+interface Props {
+  idioma: Idioma;
+  paper: Paper;
+}
+
+const { idioma, paper } = Astro.props;
+const ti = TEXTOS[idioma].investigacion;
+const meta = {
+  titulo: `${paper.titulo} — Emilio Rodríguez`,
+  descripcion: enIdioma(paper.resumen, idioma),
+};
+
+const etiqueta = "text-xs font-medium tracking-[0.12em] text-tinta-suave uppercase";
+const parrafo = "mt-3 text-sm leading-relaxed text-tinta-suave";
+---
+
+<Base idioma={idioma} rutas={rutasPaper(paper.slug)} meta={meta}>
+  <article class="mx-auto max-w-2xl px-6 pt-32 pb-[var(--aire-seccion-bottom)] sm:pt-40">
+    <a
+      href={RUTAS_INVESTIGACION[idioma]}
+      class="text-sm text-tinta-suave underline decoration-borde underline-offset-4 transition-colors duration-200 hover:text-tinta hover:decoration-tinta"
+    >
+      ← {ti.volver}
+    </a>
+
+    <p class={`mt-10 ${etiqueta}`}>{ti.estados[paper.estado]}</p>
+    <h1
+      lang="en"
+      class="mt-4 text-[clamp(1.75rem,4vw,2.5rem)] leading-[1.15] font-medium tracking-[-0.02em] text-balance"
+    >
+      {paper.titulo}
+    </h1>
+    <p class="mt-4 text-xs text-tinta-suave">
+      {paper.tituloProvisional && <>{ti.tituloProvisional} · </>}
+      {ti.proyecto}: {paper.proyecto}
+    </p>
+
+    <h2 class={`mt-12 ${etiqueta}`}>{ti.tesis}</h2>
+    <p class={parrafo}>{enIdioma(paper.tesis, idioma)}</p>
+
+    <h2 class={`mt-10 ${etiqueta}`}>{ti.aportes}</h2>
+    <ul class={`${parrafo} list-disc space-y-2 pl-5 marker:text-borde`}>
+      {paper.aportes.map((aporte) => <li>{enIdioma(aporte, idioma)}</li>)}
+    </ul>
+
+    <h2 class={`mt-10 ${etiqueta}`}>{ti.destinos}</h2>
+    <ol class={`${parrafo} list-decimal space-y-2 pl-5`}>
+      {paper.destinos.map((destino) => <li>{enIdioma(destino, idioma)}</li>)}
+    </ol>
+    <p class="mt-4 text-xs text-tinta-suave">{enIdioma(paper.calendario, idioma)}</p>
+  </article>
+</Base>

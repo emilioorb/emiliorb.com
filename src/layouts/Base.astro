@@ -10,16 +10,24 @@ import { REDES, TRABAJO, enIdioma } from "../data/contenido";
 
 interface Props {
   idioma: Idioma;
+  /** La misma página en cada idioma; por defecto, la portada. */
+  rutas?: Record<Idioma, string>;
+  meta?: { titulo: string; descripcion: string };
 }
 
 const { idioma } = Astro.props;
 const t = TEXTOS[idioma];
+const rutas = Astro.props.rutas ?? { es: rutaDe("es"), en: rutaDe("en") };
+const meta = Astro.props.meta ?? t.meta;
 const otro: Idioma = idioma === "es" ? "en" : "es";
-const canonica = new URL(rutaDe(idioma), Astro.site).href;
+const absoluta = (ruta: string) => new URL(ruta, Astro.site).href;
+const canonica = absoluta(rutas[idioma]);
 
 const imagenSocial = new URL("/og.png", Astro.site).href;
 
 const LOCALES = { es: "es_CR", en: "en_US" } as const;
+
+const puestosVigentes = TRABAJO.filter((puesto) => puesto.hasta === null);
 
 /** `sameAs` sale de REDES para no duplicar las URLs de los perfiles. */
 const personaJsonLd = {
@@ -27,14 +35,14 @@ const personaJsonLd = {
   "@type": "Person",
   name: "Emilio Rodríguez",
   url: new URL(rutaDe(idioma), Astro.site).href,
-  // El cargo sale del puesto vigente, no del antetítulo: ese incluye la
-  // empresa, que ya va aparte en `worksFor`.
-  jobTitle: enIdioma(TRABAJO[0].cargo, idioma),
-  worksFor: {
+  // Cargos y empresas salen de los puestos vigentes, no del antetítulo: ese
+  // incluye la empresa, que ya va aparte en `worksFor`.
+  jobTitle: puestosVigentes.map((puesto) => enIdioma(puesto.cargo, idioma)),
+  worksFor: puestosVigentes.map((puesto) => ({
     "@type": "Organization",
-    name: "Arclo Systems",
-    url: "https://arclosystems.com",
-  },
+    name: puesto.empresa,
+    ...(puesto.href && { url: puesto.href }),
+  })),
   address: {
     "@type": "PostalAddress",
     addressLocality: "San José",
@@ -49,14 +57,14 @@ const personaJsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>{t.meta.titulo}</title>
-    <meta name="description" content={t.meta.descripcion} />
+    <title>{meta.titulo}</title>
+    <meta name="description" content={meta.descripcion} />
     <link rel="canonical" href={canonica} />
-    <link rel="alternate" hreflang="es" href={new URL(rutaDe("es"), Astro.site).href} />
-    <link rel="alternate" hreflang="en" href={new URL(rutaDe("en"), Astro.site).href} />
-    <link rel="alternate" hreflang="x-default" href={new URL(rutaDe("es"), Astro.site).href} />
-    <meta property="og:title" content={t.meta.titulo} />
-    <meta property="og:description" content={t.meta.descripcion} />
+    <link rel="alternate" hreflang="es" href={absoluta(rutas.es)} />
+    <link rel="alternate" hreflang="en" href={absoluta(rutas.en)} />
+    <link rel="alternate" hreflang="x-default" href={absoluta(rutas.es)} />
+    <meta property="og:title" content={meta.titulo} />
+    <meta property="og:description" content={meta.descripcion} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonica} />
     <meta property="og:site_name" content="Emilio Rodríguez" />
@@ -97,12 +105,13 @@ const personaJsonLd = {
     </script>
   </head>
 
-  <body class="font-sans antialiased">
+  {/* Columna a todo el alto: en páginas cortas el pie quedaba a media pantalla. */}
+  <body class="flex min-h-dvh flex-col font-sans antialiased">
     <ScrollSuave />
     {/* `client:idle`: es decoración, puede esperar a que el hilo se libere. */}
     <FondoEstrellas client:idle />
-    <Encabezado idioma={idioma} otro={otro} />
-    <main>
+    <Encabezado idioma={idioma} rutaOtro={rutas[otro]} />
+    <main class="flex-1">
       <slot />
     </main>
     <Pie idioma={idioma} />
