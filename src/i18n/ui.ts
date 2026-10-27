@@ -55,6 +55,7 @@ interface Textos {
     destinos: string;
     volver: string;
     leer: string;
+    verTodo: string;
   };
   readonly contact: {
     titulo: string;
@@ -125,6 +126,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       destinos: "Dónde se publicaría",
       volver: "Toda la investigación",
       leer: "Ver el paper",
+      verTodo: "Ver toda la investigación",
     },
     contact: {
       titulo: "Contacto",
@@ -195,6 +197,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       destinos: "Where it would be published",
       volver: "All research",
       leer: "View the paper",
+      verTodo: "See all research",
     },
     contact: {
       titulo: "Contact",

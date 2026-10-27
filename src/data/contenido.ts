@@ -215,6 +215,7 @@ export interface Paper {
 /**
  * Solo lo que el plan del paper sostiene hoy: mientras no haya resultados
  * medidos, la tesis se presenta como hipótesis y nada figura como enviado.
+ * El más reciente va primero: la portada muestra los primeros.
  */
 export const INVESTIGACION: readonly Paper[] = [
   {

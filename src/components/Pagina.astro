@@ -5,12 +5,14 @@ import TitularSwap from "./islas/TitularSwap";
 import BajadaPruebas from "./islas/BajadaPruebas";
 import ListaProyectos from "./ListaProyectos.astro";
 import ListaPrensa from "./ListaPrensa.astro";
-import { TEXTOS, type Idioma } from "../i18n/ui";
+import ListaPapers from "./ListaPapers.astro";
+import { TEXTOS, RUTAS_INVESTIGACION, type Idioma } from "../i18n/ui";
 import {
   TRABAJO,
   PROYECTOS,
   PROYECTOS_PERSONALES,
   PRENSA,
+  INVESTIGACION,
   ESTUDIOS,
   REDES,
   enIdioma,
@@ -51,6 +53,10 @@ const PUERTAS_CONTACTO = ["LinkedIn", "GitHub"];
 const REDES_CONTACTO = PUERTAS_CONTACTO.map((nombre) =>
   REDES.find((red) => red.nombre === nombre),
 ).filter((red) => red !== undefined);
+
+const PAPERS_EN_PORTADA = 3;
+const papersPortada = INVESTIGACION.slice(0, PAPERS_EN_PORTADA);
+const hayMasPapers = INVESTIGACION.length > PAPERS_EN_PORTADA;
 ---
 
 <Base idioma={idioma}>
@@ -167,6 +173,23 @@ const REDES_CONTACTO = PUERTAS_CONTACTO.map((nombre) =>
   <section id="press" class={seccion}>
     <h2 class={encabezado}>{t.prensa.titulo}</h2>
     <ListaPrensa notas={PRENSA} idioma={idioma} leer={t.prensa.leer} />
+  </section>
+
+  <section id="research" class={seccion}>
+    <h2 class={encabezado}>{t.investigacion.titulo}</h2>
+    <ListaPapers papers={papersPortada} idioma={idioma} />
+    {
+      hayMasPapers && (
+        <p class="mt-6 text-center text-sm">
+          <a
+            href={RUTAS_INVESTIGACION[idioma]}
+            class="text-tinta-suave underline decoration-borde underline-offset-4 transition-colors duration-200 hover:text-tinta hover:decoration-tinta"
+          >
+            {t.investigacion.verTodo}
+          </a>
+        </p>
+      )
+    }
   </section>
 
   {/* Experiencia y Proyectos son hermanas y van juntas; antes del cierre hay
