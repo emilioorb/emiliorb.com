@@ -1098,3 +1098,11 @@ body[data-lectura]::after {
   background-size: 180px;
 }
 
+
+/* En el teléfono la pantalla completa no aporta (y en iPhone no existe para una
+   página): el enlace del modo cine no aparece. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .apertura__cine {
+    display: none;
+  }
+}
