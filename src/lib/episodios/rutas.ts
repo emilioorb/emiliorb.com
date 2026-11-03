@@ -7,5 +7,5 @@ export const rutaFicha = (slug: string, idioma: Idioma) => rutasProyecto(slug)[i
 export const rutasSerie = (idioma: Idioma) => ({
   inicio: rutaDe(idioma),
   contacto: rutaDe(idioma, "#proximo"),
-  proyectos: rutaDe(idioma, "#ep4-proyectos"),
+  proyectos: rutaDe(idioma, "#ep5-proyectos"),
 });

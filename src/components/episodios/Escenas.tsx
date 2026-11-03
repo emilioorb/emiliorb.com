@@ -265,11 +265,14 @@ function Cierre({ escena }: { escena: EscenaCierre }) {
 /** Más de esto y el texto pasa a la medida chica: el problema suele ser un párrafo. */
 const SINTESIS_LARGA = 140;
 
+/** Una palabra de una o dos letras («y», «de», «en») no se queda sola al final de una línea: viaja con la siguiente. */
+const atarCortas = (texto: string) => texto.replace(/(^|\s)(\p{L}{1,2}) /gu, "$1$2\u00a0");
+
 function Sintesis({ escena }: { escena: EscenaSintesis }) {
   return (
     <div className="sintesis" data-largo={escena.texto.length > SINTESIS_LARGA || undefined}>
       <h3 className="rotulo">{escena.rotulo}</h3>
-      <p className="sintesis__texto">{escena.texto}</p>
+      <p className="sintesis__texto">{atarCortas(escena.texto)}</p>
       {escena.enlaces.length > 0 && (
         <p className="item__enlaces">
           {escena.enlaces.map((enlace) => (

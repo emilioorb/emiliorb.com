@@ -29,7 +29,7 @@ Bilingüe: español en la raíz, inglés bajo `/en`.
 
 ## Formato: «Episodios»
 
-El sitio entero se cuenta como una serie de anime minimalista. La portada (`/` y `/en/`) son seis episodios y un cierre; cada ficha de proyecto (`/proyectos/[slug]`, `/en/projects/[slug]`) es una serie corta con las mismas piezas. Cada escena muestra una sola idea y el scroll avanza de escena en escena con cortes secos.
+El sitio entero se cuenta como una serie de anime minimalista. La portada (`/` y `/en/`) son siete episodios y un cierre; cada ficha de proyecto (`/proyectos/[slug]`, `/en/projects/[slug]`) es una serie corta con las mismas piezas. Cada escena muestra una sola idea y el scroll avanza de escena en escena con cortes secos.
 
 - **Episodios.** 1 GSIT (la prueba), 2 Novelteak (sin señal), 3 Arclo Systems, 4 proyectos, 5 investigación y prensa, 6 libros y ajedrez, y «Próximo episodio» como contacto.
 - **El narrador.** Un narrador en tercera persona («Emilio empezó en QA…») cuenta cada escena en subtítulos, sin voz ni música: el sitio no suena. Tono íntimo y contenido, líneas cortas, solo hechos de `contenido.ts`. Lo que se lee en pantalla sigue en primera persona, en la voz de Emilio.

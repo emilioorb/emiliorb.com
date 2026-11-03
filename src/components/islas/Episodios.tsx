@@ -27,11 +27,16 @@ interface Props {
  */
 const ANCLAS_VIEJAS: Readonly<Record<string, string>> = {
   inicio: "apertura",
-  work: "ep1-titulo",
-  projects: "ep4-proyectos",
-  press: "ep5-lectura",
-  research: "ep5-titulo",
-  books: "ep6-libros",
+  work: "ep2-titulo",
+  projects: "ep5-proyectos",
+  press: "ep6-lectura",
+  research: "ep6-titulo",
+  books: "ep7-libros",
+  // Los ids de antes de que la universidad abriera la serie y todo corriera un número.
+  "ep4-proyectos": "ep5-proyectos",
+  "ep5-lectura": "ep6-lectura",
+  "ep6-libros": "ep7-libros",
+  "ep6-ajedrez": "ep7-ajedrez",
   contact: "proximo",
 };
 
@@ -317,7 +322,7 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
         });
       });
 
-      // Llegar con un ancla (la ficha vuelve a #ep4-proyectos, y hay enlaces viejos
+      // Llegar con un ancla (la ficha vuelve a #ep5-proyectos, y hay enlaces viejos
       // a #projects): el corte cae justo en el borde de la escena, así que se
       // aterriza un poco adentro de ella.
       const seguirAncla = () => {

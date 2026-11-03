@@ -553,7 +553,9 @@ export const INVESTIGACION: readonly Paper[] = [
 export interface Estudio {
   readonly institucion: string;
   readonly href: string;
-  readonly titulo: Bilingue;
+  /** El grado («Licenciatura»), aparte de la carrera: en pantalla van en piezas distintas. */
+  readonly grado: Bilingue;
+  readonly carrera: Bilingue;
   readonly desde: string;
   readonly hasta: string;
 }
@@ -566,9 +568,10 @@ export interface Estudio {
 export const ESTUDIOS: Estudio = {
   institucion: "Universidad Invenio",
   href: "https://invenio.ac.cr",
-  titulo: {
-    es: "Licenciatura en Tecnologías de Información y Comunicación Empresariales",
-    en: "Licentiate degree, Enterprise Information and Communication Technologies",
+  grado: { es: "Licenciatura", en: "Licentiate degree" },
+  carrera: {
+    es: "Tecnologías de Información y Comunicación Empresariales",
+    en: "Enterprise Information and Communication Technologies",
   },
   desde: "2022",
   hasta: "2026",

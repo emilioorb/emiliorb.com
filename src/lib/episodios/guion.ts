@@ -1,4 +1,5 @@
 import {
+  ESTUDIOS,
   INVESTIGACION,
   LIBROS,
   PRENSA,
@@ -64,10 +65,15 @@ const COPY = {
     apertura: {
       invitacion: "Baje para empezar el primer episodio.",
       cine: "Verlo en pantalla completa",
-      narracion: "Emilio Rodríguez es ingeniero de software & IA, en Costa Rica. Esta es su historia, en seis episodios.",
+      narracion: "Emilio Rodríguez es ingeniero de software & IA, en Costa Rica. Esta es su historia, en siete episodios.",
+    },
+    universidad: {
+      titulo: ["Primero,", "la carrera."],
+      narracion: (desde: string, institucion: string) => `En ${desde} entró a la ${institucion}.`,
+      linea: "La carrera corrió a la par de los tres trabajos que siguen.",
     },
     ep1: {
-      titulo: ["Primero,", "la prueba."],
+      titulo: ["Luego,", "la prueba."],
       narracion: "Empezó en QA. Después programó en .NET, y al final lideró proyectos para clientes de tres países.",
       sectores: "banca, comercio, turismo e industria",
       contexto: (sectores: string) => `Clientes de ${sectores}.`,
@@ -150,10 +156,15 @@ const COPY = {
     apertura: {
       invitacion: "Scroll down to start the first episode.",
       cine: "Watch it full screen",
-      narracion: "Emilio Rodríguez is a software and AI engineer in Costa Rica. This is his story, in six episodes.",
+      narracion: "Emilio Rodríguez is a software and AI engineer in Costa Rica. This is his story, in seven episodes.",
+    },
+    universidad: {
+      titulo: ["First,", "the degree."],
+      narracion: (desde: string, institucion: string) => `In ${desde} he started at ${institucion}.`,
+      linea: "The degree ran alongside the three jobs that follow.",
     },
     ep1: {
-      titulo: ["First,", "the test."],
+      titulo: ["Then,", "the test."],
       narracion: "He started in QA. Then he wrote .NET, and in the end he led projects for clients in three countries.",
       sectores: "banking, retail, tourism and industry",
       contexto: (sectores: string) => `Clients in ${sectores}.`,
@@ -386,19 +397,41 @@ export function construirGuion({ idioma, portadas, ajedrez, usuarioChess }: Entr
       narracion: lineas(idioma, "apertura", [c.apertura.narracion]),
     },
 
-    // Episodio 1 · GSIT
+    // Episodio 1 · Universidad
     {
       tipo: "titulo",
       id: "ep1-titulo",
       largo: 140,
       tono: "invertido",
-      ...tarjeta(idioma, 1, ep1.titulo),
+      ...tarjeta(idioma, 1, c.universidad.titulo),
+      pie: `${ESTUDIOS.institucion} · ${ESTUDIOS.desde}–${ESTUDIOS.hasta}`,
+      narracion: lineas(idioma, "ep1-titulo", [c.universidad.narracion(ESTUDIOS.desde, ESTUDIOS.institucion)]),
+    },
+    {
+      tipo: "sintesis",
+      id: "ep1-carrera",
+      largo: 150,
+      tono: "claro",
+      // En el teléfono el rótulo se parte después del grado: la institución y sus años no se separan.
+      rotulo: `${ESTUDIOS.grado[idioma]} · ${ESTUDIOS.institucion.replaceAll(" ", "\u00a0")}\u00a0·\u00a0${ESTUDIOS.desde}\u2060–\u2060${ESTUDIOS.hasta}`,
+      texto: ESTUDIOS.carrera[idioma],
+      enlaces: [{ texto: new URL(ESTUDIOS.href).hostname, href: ESTUDIOS.href, externo: true }],
+      narracion: lineas(idioma, "ep1-carrera", [c.universidad.linea]),
+    },
+
+    // Episodio 2 · GSIT
+    {
+      tipo: "titulo",
+      id: "ep2-titulo",
+      largo: 140,
+      tono: "invertido",
+      ...tarjeta(idioma, 2, ep1.titulo),
       pie: `${gsit.empresa} · ${periodo(gsit, idioma)} · ${gsit.cargo[idioma]}`,
-      narracion: lineas(idioma, "ep1-titulo", [ep1.narracion]),
+      narracion: lineas(idioma, "ep2-titulo", [ep1.narracion]),
     },
     {
       tipo: "etapa",
-      id: "ep1-escena",
+      id: "ep2-escena",
       largo: 420,
       tono: "claro",
       empresa: gsit.empresa,
@@ -406,22 +439,22 @@ export function construirGuion({ idioma, portadas, ajedrez, usuarioChess }: Entr
       lugares: citado(gsit.detalle[idioma], ["Costa Rica", "Nicaragua", "Guatemala"]),
       contexto: ep1.contexto(citado(gsit.detalle[idioma], [ep1.sectores]).join("")),
       pasos: ep1.pasos.map((texto, i) => ({ texto, remate: i === ep1.pasos.length - 1 })),
-      narracion: lineas(idioma, "ep1-escena", ep1.lineas),
+      narracion: lineas(idioma, "ep2-escena", ep1.lineas),
     },
 
-    // Episodio 2 · Novelteak
+    // Episodio 3 · Novelteak
     {
       tipo: "titulo",
-      id: "ep2-titulo",
+      id: "ep3-titulo",
       largo: 140,
       tono: "invertido",
-      ...tarjeta(idioma, 2, ep2.titulo),
+      ...tarjeta(idioma, 3, ep2.titulo),
       pie: `${novelteak.empresa} · ${periodo(novelteak, idioma)} · ${novelteak.cargo[idioma]}`,
-      narracion: lineas(idioma, "ep2-titulo", [ep2.narracion]),
+      narracion: lineas(idioma, "ep3-titulo", [ep2.narracion]),
     },
     {
       tipo: "etapa",
-      id: "ep2-escena",
+      id: "ep3-escena",
       largo: 420,
       tono: "claro",
       empresa: novelteak.empresa,
@@ -429,22 +462,22 @@ export function construirGuion({ idioma, portadas, ajedrez, usuarioChess }: Entr
       lugares: citado(novelteak.detalle[idioma], ["Costa Rica", "Nicaragua"]),
       contexto: `${novelteak.stack.slice(0, -1).join(", ")} ${c.y} ${novelteak.stack.at(-1) ?? ""}.`,
       pasos: ep2.pasos.map((texto, i) => ({ texto, remate: i === ep2.pasos.length - 1 })),
-      narracion: lineas(idioma, "ep2-escena", ep2.lineas),
+      narracion: lineas(idioma, "ep3-escena", ep2.lineas),
     },
 
-    // Episodio 3 · Arclo Systems
+    // Episodio 4 · Arclo Systems
     {
       tipo: "titulo",
-      id: "ep3-titulo",
+      id: "ep4-titulo",
       largo: 140,
       tono: "invertido",
-      ...tarjeta(idioma, 3, ep3.titulo),
+      ...tarjeta(idioma, 4, ep3.titulo),
       pie: `${arclo.empresa} · ${periodo(arclo, idioma)} · ${arclo.cargo[idioma]}`,
-      narracion: lineas(idioma, "ep3-titulo", [ep3.narracion(arclo.desde, arclo.empresa)]),
+      narracion: lineas(idioma, "ep4-titulo", [ep3.narracion(arclo.desde, arclo.empresa)]),
     },
     {
       tipo: "etapa",
-      id: "ep3-escena",
+      id: "ep4-escena",
       largo: 360,
       tono: "claro",
       empresa: arclo.empresa,
@@ -452,81 +485,81 @@ export function construirGuion({ idioma, portadas, ajedrez, usuarioChess }: Entr
       lugares: [],
       contexto: citado(t.hero.bajada, [ep3.contexto]).join(""),
       pasos: ep3.pasos.map((texto, i) => ({ texto, remate: i === ep3.pasos.length - 1 })),
-      narracion: lineas(idioma, "ep3-escena", ep3.lineas),
+      narracion: lineas(idioma, "ep4-escena", ep3.lineas),
     },
 
-    // Episodio 4 · Proyectos
+    // Episodio 5 · Proyectos
     {
       tipo: "titulo",
-      id: "ep4-titulo",
+      id: "ep5-titulo",
       largo: 140,
       tono: "invertido",
-      ...tarjeta(idioma, 4, c.ep4.titulo),
+      ...tarjeta(idioma, 5, c.ep4.titulo),
       pie: `${proyectos.length} ${c.proyectos} · ${Math.min(...anios)}–${Math.max(...anios)}`,
-      narracion: lineas(idioma, "ep4-titulo", [c.ep4.narracion]),
+      narracion: lineas(idioma, "ep5-titulo", [c.ep4.narracion]),
     },
     {
       tipo: "pasarela",
-      id: "ep4-proyectos",
+      id: "ep5-proyectos",
       largo: 100 + proyectos.length * 55,
       tono: "claro",
       encabezado: t.nav.projects,
       items: proyectos,
       narracion: lineas(
         idioma,
-        "ep4-proyectos",
+        "ep5-proyectos",
         ORDEN_PROYECTOS.map((slug) => c.ep4.proyectos[slug]),
       ),
     },
 
-    // Episodio 5 · Investigación y prensa
+    // Episodio 6 · Investigación y prensa
     {
       tipo: "titulo",
-      id: "ep5-titulo",
+      id: "ep6-titulo",
       largo: 140,
       tono: "invertido",
-      ...tarjeta(idioma, 5, c.ep5.titulo),
+      ...tarjeta(idioma, 6, c.ep5.titulo),
       pie: `${t.nav.investigacion} · ${t.nav.prensa}`,
-      narracion: lineas(idioma, "ep5-titulo", [c.ep5.narracion]),
+      narracion: lineas(idioma, "ep6-titulo", [c.ep5.narracion]),
     },
     {
       tipo: "pasarela",
-      id: "ep5-lectura",
+      id: "ep6-lectura",
       largo: 100 + lectura.length * 60,
       tono: "claro",
       encabezado: `${t.nav.investigacion} ${c.y} ${t.nav.prensa.toLowerCase()}`,
       items: lectura.map((l) => l.item),
       narracion: lineas(
         idioma,
-        "ep5-lectura",
+        "ep6-lectura",
         lectura.map((l) => l.narracion),
       ),
     },
 
-    // Episodio 6 · Lo personal
+    // Episodio 7 · Lo personal
     {
       tipo: "titulo",
-      id: "ep6-titulo",
+      id: "ep7-titulo",
       largo: 140,
       tono: "invertido",
-      ...tarjeta(idioma, 6, c.ep6.titulo),
+      ...tarjeta(idioma, 7, c.ep6.titulo),
       pie: `${t.nav.libros} · ${t.ajedrez.titulo}`,
-      narracion: lineas(idioma, "ep6-titulo", [c.ep6.narracion]),
+      narracion: lineas(idioma, "ep7-titulo", [c.ep6.narracion]),
     },
     {
       tipo: "estante",
-      id: "ep6-libros",
+      id: "ep7-libros",
       largo: 260,
       tono: "claro",
       encabezado: t.libros.titulo,
       libros,
       destacado: { rotulo: c.ep6.empiece(primerLibro.titulo), porQue: primerLibro.porQue[idioma] },
       enlace: { texto: t.libros.verTodos, href: RUTAS_LIBROS[idioma], externo: false },
-      narracion: lineas(idioma, "ep6-libros", c.ep6.libros(primerLibro.titulo)),
+      narracion: lineas(idioma, "ep7-libros", c.ep6.libros(primerLibro.titulo)),
     },
     {
       tipo: "ajedrez",
-      id: "ep6-ajedrez",
+      id: "ep7-ajedrez",
       largo: 220,
       tono: "claro",
       encabezado: t.ajedrez.titulo,
@@ -534,7 +567,7 @@ export function construirGuion({ idioma, portadas, ajedrez, usuarioChess }: Entr
       partida: ajedrez.partida,
       cifras: ajedrez.cifras,
       perfil: { texto: t.ajedrez.perfil, href: urlPerfil(usuarioChess), externo: true },
-      narracion: lineas(idioma, "ep6-ajedrez", [c.ep6.ajedrez]),
+      narracion: lineas(idioma, "ep7-ajedrez", [c.ep6.ajedrez]),
     },
 
     {
