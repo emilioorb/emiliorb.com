@@ -28,3 +28,9 @@ pnpm-debug.log*
 
 # claude local settings
 .claude/settings.local.json
+
+# capturas y logs del MCP de Playwright
+.playwright-mcp/
+
+# Windows
+desktop.ini
