@@ -85,6 +85,17 @@
   background-size: 180px;
 }
 
+/* De prueba: en oscuro el fondo queda sólido, como en claro, sin el grano encima. */
+:root[data-tema="oscuro"] :is(.escena__lienzo, .libreria, body[data-lectura])::after {
+  opacity: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) :is(.escena__lienzo, .libreria, body[data-lectura])::after {
+    opacity: 0;
+  }
+}
+
 .escena__contenido {
   position: relative;
   z-index: 3;
