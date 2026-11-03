@@ -21,17 +21,27 @@ Como los cuatro importan, el copy **lidera con lo más amplio y ofrece caminos s
 
 Un portafolio personal, no una landing de venta. No hace una oferta: presenta a una persona y su trabajo.
 
-La progresión es el argumento: QA y gestión de proyectos para banca y retail (GSIT, 2022–2023) → analista programador en una plataforma multitenant (Novelteak, 2024–2025) → fundador y CEO dirigiendo arquitectura y equipo (Arclo Systems, 2025–). Con producto publicado de punta a punta: Kodi en Google Play y la plataforma de Transportes Acaya.
+La progresión es el argumento: QA, desarrollo en .NET y gestión de proyectos para banca y retail (GSIT, 2022–2024) → analista programador en una plataforma multitenant (Novelteak, 2024–2025) → fundador y CEO dirigiendo arquitectura y equipo (Arclo Systems, 2025–). Con producto publicado de punta a punta: Kodi en Google Play y la plataforma de Transportes Acaya.
 
 Éxito es que las cuatro audiencias salgan con la misma conclusión —este tipo construye y entrega— y con un camino claro hacia lo que a cada una le interesa.
 
 Bilingüe: español en la raíz, inglés bajo `/en`.
 
+## Formato: «Episodios»
+
+El sitio entero se cuenta como una serie de anime minimalista. La portada (`/` y `/en/`) son seis episodios y un cierre; cada ficha de proyecto (`/proyectos/[slug]`, `/en/projects/[slug]`) es una serie corta con las mismas piezas. Cada escena muestra una sola idea y el scroll avanza de escena en escena con cortes secos.
+
+- **Episodios.** 1 GSIT (la prueba), 2 Novelteak (sin señal), 3 Arclo Systems, 4 proyectos, 5 investigación y prensa, 6 libros y ajedrez, y «Próximo episodio» como contacto.
+- **El narrador.** Un narrador en tercera persona («Emilio empezó en QA…») cuenta cada escena en subtítulos, sin voz ni música: el sitio no suena. Tono íntimo y contenido, líneas cortas, solo hechos de `contenido.ts`. Lo que se lee en pantalla sigue en primera persona, en la voz de Emilio.
+- **Investigación y libros** no son escenas: son páginas de lectura con la cabecera, los tokens y el grano de la serie.
+
+En inglés la serie no es una traducción palabra por palabra: está escrita en inglés con el mismo cuidado, con los campos `en` de `contenido.ts` y `ui.ts` como fuente de los hechos.
+
 ## Brand Personality
 
 Sobrio con firma, y editorial en la jerarquía. Contención con carácter: la base es monocroma y precisa, y hay **un** gesto memorable que es suyo, no tres compitiendo.
 
-Voz: primera persona, frases cortas, voseo costarricense cuando se dirige al lector. Concreto antes que adjetivado: "reemplazó la hoja de cálculo con la que operaban", no "soluciones innovadoras". Sin signos de exclamación, sin superlativos, sin palabras de relleno tipo "apasionado" o "innovador".
+Voz: primera persona, frases cortas, y de usted cuando se dirige al lector, igual que Arclo Systems ("Cercano no es tutear"). Las marcas de producto conservan su propia voz: "Kodi - Estudiá y aprobá" le habla a estudiantes. Concreto antes que adjetivado: "reemplazó la hoja de cálculo con la que operaban", no "soluciones innovadoras". Sin signos de exclamación, sin superlativos, sin palabras de relleno tipo "apasionado" o "innovador".
 
 Tres palabras: **preciso, entregado, sin ruido.**
 
@@ -65,4 +75,6 @@ Mantener el nivel que el código ya tiene, y aplicarlo a todo lo nuevo:
 - **Foco visible de autor**, no el del navegador, porque cambia de color con el tema y a veces no se ve.
 - Decoración marcada `aria-hidden`; nunca lleva contenido que importe.
 - Semántica real: un `h1` es un `h1` aunque lo anime un componente.
-- Los dos temas (claro y oscuro) son ciudadanos de primera. Nada puede depender de uno solo.
+- Los dos temas (claro y oscuro) son ciudadanos de primera. Nada puede depender de uno solo. El tema sigue al sistema: la serie no tiene botón de tema, porque cada escena ya decide su tono (claro o invertido).
+- La serie se recorre entera con teclado: ↑/↓ y Re Pág/Av Pág pasan un momento por pulsación, y el foco que cae en una escena que no está en pantalla la trae.
+- Los subtítulos se anuncian una sola vez por línea (`aria-live="polite"`); con `prefers-reduced-motion` no hay escenario ni scrub y todo se lee en orden.
