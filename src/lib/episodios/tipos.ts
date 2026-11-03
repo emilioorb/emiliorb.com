@@ -162,6 +162,18 @@ export interface EscenaSalida extends Comun {
   readonly volver: Enlace;
 }
 
+/** Un libro por escena, en la librería: la portada y por qué lo recomiendo. */
+export interface EscenaLibro extends Comun {
+  readonly tipo: "libro";
+  /** «Libro 01 / 06»: el lugar en el orden en que los recomiendo. */
+  readonly rotulo: string;
+  readonly titulo: string;
+  readonly autor: string;
+  readonly anio: string;
+  readonly porQue: string;
+  readonly portada: Imagen;
+}
+
 export type Escena =
   | EscenaApertura
   | EscenaTitulo
@@ -172,7 +184,8 @@ export type Escena =
   | EscenaCierre
   | EscenaSintesis
   | EscenaBalance
-  | EscenaSalida;
+  | EscenaSalida
+  | EscenaLibro;
 
 /**
  * Quién pone las palabras del narrador. Hoy es el guion fijo; más adelante

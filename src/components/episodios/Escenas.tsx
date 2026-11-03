@@ -9,6 +9,7 @@ import type {
   EscenaBalance,
   EscenaPasarela,
   EscenaSalida,
+  EscenaLibro,
   EscenaSintesis,
   EscenaTitulo,
 } from "../../lib/episodios/tipos";
@@ -335,6 +336,31 @@ function Salida({ escena }: { escena: EscenaSalida }) {
   );
 }
 
+function Libro({ escena }: { escena: EscenaLibro }) {
+  return (
+    <div className="libro-escena">
+      <img
+        className="libro-escena__portada"
+        src={escena.portada.src}
+        width={escena.portada.ancho}
+        height={escena.portada.alto}
+        alt={escena.portada.alt}
+        decoding="async"
+      />
+      <div className="libro-escena__texto">
+        <p className="rotulo">{escena.rotulo}</p>
+        <h2 className="libro-escena__titulo" lang="en">
+          {escena.titulo}
+        </h2>
+        <p className="libro-escena__autor">
+          {escena.autor} · {escena.anio}
+        </p>
+        <p className="libro-escena__porque">{escena.porQue}</p>
+      </div>
+    </div>
+  );
+}
+
 function Dibujo({ escena }: { escena: Escena }) {
   switch (escena.tipo) {
     case "apertura":
@@ -357,6 +383,8 @@ function Dibujo({ escena }: { escena: Escena }) {
       return <Balance escena={escena} />;
     case "salida":
       return <Salida escena={escena} />;
+    case "libro":
+      return <Libro escena={escena} />;
     default: {
       const sinCubrir: never = escena;
       return sinCubrir;

@@ -16,11 +16,13 @@ interface Props {
   /** A dónde llevan el nombre y el contacto de la cabecera. */
   inicio: string;
   contacto: string;
+  /** En una página suelta contada como serie (la librería), la escena a la que vuelve. */
+  volver?: string;
 }
 
-const { idioma, escenas, rutas, meta, inicio, contacto } = Astro.props;
+const { idioma, escenas, rutas, meta, inicio, contacto, volver } = Astro.props;
 const otro: Idioma = idioma === "es" ? "en" : "es";
-const rutasSerie: RutasSerie = { inicio, contacto, otroIdioma: rutas[otro] };
+const rutasSerie: RutasSerie = { inicio, contacto, otroIdioma: rutas[otro], volver };
 ---
 
 <Base idioma={idioma} rutas={rutas} meta={meta} cabecera={false}>

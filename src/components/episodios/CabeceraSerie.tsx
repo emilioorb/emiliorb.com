@@ -10,11 +10,6 @@ interface Props {
   textos: TextosSerie;
   /** En las páginas de lectura el texto pasa por debajo: la cabecera lleva fondo. */
   conFondo?: boolean;
-  /**
-   * En una página suelta, la escena de la serie que la cuenta. El nombre lleva
-   * al inicio de todo; esto devuelve a donde estaba el visitante.
-   */
-  volver?: string;
 }
 
 export interface RutasSerie {
@@ -23,6 +18,11 @@ export interface RutasSerie {
   readonly contacto: string;
   /** Esta misma página en el otro idioma. */
   readonly otroIdioma: string;
+  /**
+   * En una página suelta, la escena de la serie que la cuenta. El nombre lleva
+   * al inicio de todo; esto devuelve a donde estaba el visitante.
+   */
+  readonly volver?: string;
 }
 
 /**
@@ -30,7 +30,7 @@ export interface RutasSerie {
  * el contacto. Siempre a la vista; solo el modo cine la apaga. Esconderla según
  * la dirección del scroll se sentía al azar con el scroll suavizado.
  */
-export function CabeceraSerie({ rotulo, tono, rutas, textos, conFondo = false, volver }: Props) {
+export function CabeceraSerie({ rotulo, tono, rutas, textos, conFondo = false }: Props) {
   const { corto, etiqueta } = textos.otroIdioma;
   const codigo = corto.toLowerCase();
   return (
@@ -46,8 +46,8 @@ export function CabeceraSerie({ rotulo, tono, rutas, textos, conFondo = false, v
       )}
       <p className="cabecera-serie__episodio">{rotulo}</p>
       <div className="cabecera-serie__derecha">
-        {volver && (
-          <a className="cabecera-serie__volver" href={volver} aria-label={textos.volver.etiqueta}>
+        {rutas.volver && (
+          <a className="cabecera-serie__volver" href={rutas.volver} aria-label={textos.volver.etiqueta}>
             <span aria-hidden="true">← </span>
             {textos.volver.corto}
           </a>

@@ -68,6 +68,7 @@ export function coreografiaFijada(escena: Escena, seccion: HTMLElement, opciones
     case "cierre":
     case "sintesis":
     case "salida":
+    case "libro":
       return null;
   }
 }

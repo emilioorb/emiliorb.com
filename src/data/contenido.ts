@@ -591,11 +591,6 @@ export const REDES: readonly Red[] = [
 export interface Libro {
   /** Identificador estable del libro: clave en el estante. */
   readonly slug: string;
-  /**
-   * Color del lomo, tomado de la identidad de la portada, y el de su título,
-   * elegido por contraste (todos pasan 4.5:1). Se ajusta a mano al sumar un libro.
-   */
-  readonly lomo: { readonly fondo: string; readonly tinta: string };
   /** En el idioma de la edición que leí: traducir un título ajeno sería inventarlo. */
   readonly titulo: string;
   readonly portada: ImageMetadata;
@@ -608,7 +603,6 @@ export interface Libro {
 export const LIBROS: readonly Libro[] = [
   {
     slug: "the-goal",
-    lomo: { fondo: "#003c65", tinta: "#f4f4f5" },
     titulo: "The Goal",
     portada: portadaTheGoal,
     autor: "Eliyahu M. Goldratt",
@@ -620,7 +614,6 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "the-phoenix-project",
-    lomo: { fondo: "#e8e6df", tinta: "#0b0b0c" },
     titulo: "The Phoenix Project",
     portada: portadaPhoenixProject,
     autor: "Gene Kim, Kevin Behr, George Spafford",
@@ -632,7 +625,6 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "crisis-engineering",
-    lomo: { fondo: "#2b3a8f", tinta: "#f4f4f5" },
     titulo: "Crisis Engineering",
     portada: portadaCrisisEngineering,
     autor: "Marina Nitze, Matthew Weaver, Mikey Dickerson",
@@ -644,7 +636,6 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "the-infinity-machine",
-    lomo: { fondo: "#c6a691", tinta: "#0b0b0c" },
     titulo: "The Infinity Machine",
     portada: portadaInfinityMachine,
     autor: "Sebastian Mallaby",
@@ -656,7 +647,6 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "ai-for-good",
-    lomo: { fondo: "#f9fbee", tinta: "#0b0b0c" },
     titulo: "AI for Good",
     portada: portadaAiForGood,
     autor: "Josh Tyrangiel",
@@ -668,7 +658,6 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "how-great-ideas-happen",
-    lomo: { fondo: "#e6e2d9", tinta: "#0b0b0c" },
     titulo: "How Great Ideas Happen",
     portada: portadaGreatIdeas,
     autor: "George Newman",

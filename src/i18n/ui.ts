@@ -1,6 +1,5 @@
 import type { EstadoPaper } from "../data/contenido";
 import type { Final } from "../lib/ajedrez";
-import type { TextosGaleria } from "../components/islas/GaleriaLibros";
 
 export const IDIOMAS = ["es", "en"] as const;
 export type Idioma = (typeof IDIOMAS)[number];
@@ -104,9 +103,6 @@ interface Textos {
     titulo: string;
     bajada: string;
     verTodos: string;
-    /** Con `{titulo}` donde va el nombre del libro. */
-    elegir: string;
-    galeria: TextosGaleria;
   };
   readonly ajedrez: TextosAjedrez;
   readonly contact: {
@@ -169,20 +165,6 @@ export const TEXTOS: Record<Idioma, Textos> = {
       titulo: "Libros que recomiendo",
       bajada: "Los que más me han servido para construir y dirigir.",
       verTodos: "Ver todos los libros",
-      elegir: "Ver {titulo}",
-      galeria: {
-        anterior: "Libro anterior",
-        siguiente: "Libro siguiente",
-        posicion: "Libro {n} de {total}",
-        narrador: {
-          "the-goal": "Goldratt lo publicó en 1984. Un sistema rinde lo que rinde su cuello de botella.",
-          "the-phoenix-project": "En 2013, Kim, Behr y Spafford llevaron las ideas de The Goal al software.",
-          "crisis-engineering": "Nitze, Weaver y Dickerson rescataron HealthCare.gov. En 2026 escribieron qué hacer cuando algo se cae.",
-          "the-infinity-machine": "En 2026, Mallaby contó cómo Hassabis llevó DeepMind entre la ciencia de frontera y el producto.",
-          "ai-for-good": "En 2026, Tyrangiel escribió sobre maestros, médicos y funcionarios que resuelven problemas concretos con IA.",
-          "how-great-ideas-happen": "En 2026, Newman explicó cómo nacen y se filtran las ideas que vale la pena perseguir.",
-        },
-      },
     },
     ajedrez: {
       titulo: "Ajedrez",
@@ -274,20 +256,6 @@ export const TEXTOS: Record<Idioma, Textos> = {
       titulo: "Books I recommend",
       bajada: "The ones that have helped me most to build and lead.",
       verTodos: "See all the books",
-      elegir: "Show {titulo}",
-      galeria: {
-        anterior: "Previous book",
-        siguiente: "Next book",
-        posicion: "Book {n} of {total}",
-        narrador: {
-          "the-goal": "Goldratt published it in 1984. A system performs as well as its bottleneck.",
-          "the-phoenix-project": "In 2013, Kim, Behr and Spafford carried the ideas of The Goal over to software.",
-          "crisis-engineering": "Nitze, Weaver and Dickerson rescued HealthCare.gov. In 2026 they wrote down what to do when something goes down.",
-          "the-infinity-machine": "In 2026, Mallaby told how Hassabis steered DeepMind between frontier science and product.",
-          "ai-for-good": "In 2026, Tyrangiel wrote about teachers, doctors and civil servants fixing concrete problems with AI.",
-          "how-great-ideas-happen": "In 2026, Newman explained how ideas worth pursuing are born and filtered.",
-        },
-      },
     },
     ajedrez: {
       titulo: "Chess",

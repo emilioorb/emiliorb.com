@@ -1,8 +1,7 @@
 ---
-import GaleriaLibros from "./GaleriaLibros.astro";
-import Base from "../layouts/Base.astro";
-import { CabeceraSerie } from "./episodios/CabeceraSerie";
+import PaginaSerie from "./PaginaSerie.astro";
 import { TEXTOS, RUTAS_LIBROS, type Idioma } from "../i18n/ui";
+import { cargarLibros } from "../lib/episodios/cargar";
 import { rutasSerie } from "../lib/episodios/rutas";
 
 interface Props {
@@ -10,27 +9,17 @@ interface Props {
 }
 
 const { idioma } = Astro.props;
-const t = TEXTOS[idioma];
-const tl = t.libros;
-const otro: Idioma = idioma === "es" ? "en" : "es";
 const serie = rutasSerie(idioma);
+const escenas = await cargarLibros(idioma);
 ---
 
-{/* La librería es una escena de la serie y no una página de lectura: la
-    cabecera va transparente sobre el lienzo, como en la portada, y no la
-    variante con fondo que `Base` pone a las páginas de lectura. */}
-<Base idioma={idioma} rutas={RUTAS_LIBROS} meta={tl.meta} cabecera={false} pie={false}>
-  <script is:inline>
-    // Sin barra de desplazamiento, como en la serie: antes del primer pintado
-    // para que el ancho no cambie después.
-    document.documentElement.dataset.sinBarra = "";
-  </script>
-  <CabeceraSerie
-    rotulo={tl.titulo}
-    tono="claro"
-    rutas={{ inicio: serie.inicio, contacto: serie.contacto, otroIdioma: RUTAS_LIBROS[otro] }}
-    volver={serie.libros}
-    textos={t.serie}
-  />
-  <GaleriaLibros idioma={idioma} />
-</Base>
+{/* La librería se cuenta como la serie: un libro por escena, con el narrador. */}
+<PaginaSerie
+  idioma={idioma}
+  escenas={escenas}
+  rutas={RUTAS_LIBROS}
+  meta={TEXTOS[idioma].libros.meta}
+  inicio={serie.inicio}
+  contacto={serie.contacto}
+  volver={serie.libros}
+/>
