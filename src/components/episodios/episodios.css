@@ -49,6 +49,11 @@
   }
 }
 
+/* Safari 26 ya no lee theme-color: tiñe su barra con el fondo del body. */
+:root[data-tono-escena="invertido"] body {
+  background: var(--tinta);
+}
+
 .escena {
   position: relative;
   z-index: var(--orden);
