@@ -157,6 +157,8 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
       });
 
       const mm = gsap.matchMedia();
+      // Sin movimiento no hay coreografías: basta con caer en el borde de la escena.
+      let aterrizarEn: (seccion: HTMLElement) => void = aterrizar;
 
       mm.add(MOVIMIENTO, () => {
         const raizHtml = document.documentElement;
@@ -204,6 +206,14 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
             },
           });
         });
+
+        // En una escena con coreografía, el borde es el instante antes de que
+        // entre lo primero: se aterriza donde su primer momento ya se ve entero.
+        aterrizarEn = (seccion) => {
+          const fijada = fijadas[secciones.indexOf(seccion)];
+          if (fijada) requestAnimationFrame(() => fijada.irA(0));
+          else aterrizar(seccion);
+        };
 
         // Con teclado, el foco puede caer en un enlace de una escena o de un
         // tiempo que todavía no está en pantalla: el scroll lo va a buscar.
@@ -327,7 +337,7 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
       // aterriza un poco adentro de ella.
       const seguirAncla = () => {
         const anclada = escenaDelAncla(secciones);
-        if (anclada) aterrizar(anclada);
+        if (anclada) aterrizarEn(anclada);
       };
       seguirAncla();
       window.addEventListener("hashchange", seguirAncla);
