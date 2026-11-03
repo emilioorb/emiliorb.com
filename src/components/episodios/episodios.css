@@ -68,13 +68,26 @@
   justify-content: center;
   padding: calc(var(--alto-cabecera) + 1rem) var(--pad-seccion) var(--zona-subtitulos);
   overflow: clip;
-  background: var(--fondo);
+  /* El fondo va en ::before y no en el lienzo: Safari 26 tiñe sus barras con el
+     background-color de cualquier sticky que toque el borde, aunque esté en
+     opacity 0, y con las escenas apiladas tomaba la que no se ve. Así cae al
+     fondo del body, que sigue el tono de la escena activa. */
+  isolation: isolate;
+  --fondo-lienzo: var(--fondo);
   color: var(--tinta);
+}
+
+.escena__lienzo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--fondo-lienzo);
 }
 
 .escena[data-tono="invertido"] .escena__lienzo {
   --suave: var(--tinta-suave-inv);
-  background: var(--tinta);
+  --fondo-lienzo: var(--tinta);
   color: var(--fondo);
 }
 
