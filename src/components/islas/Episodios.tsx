@@ -60,6 +60,8 @@ const MOVIMIENTO = "(prefers-reduced-motion: no-preference)";
 const MENOS_MOVIMIENTO = "(prefers-reduced-motion: reduce)";
 /** Las teclas que pasan la serie un momento por pulsación, y hacia dónde. */
 const TECLAS_PASO: Readonly<Record<string, 1 | -1>> = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
+/** Lo que tiene que recorrer el dedo (px) para que un gesto cuente como paso y no como toque. */
+const UMBRAL_GESTO = 24;
 
 /** Lo que dice la cabecera en esta escena: el episodio en curso, o el rótulo del cierre. */
 function rotuloHasta(escenas: readonly Escena[], indice: number): string | null {
@@ -170,7 +172,8 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
             gsap.set(lienzo, { opacity: activa ? 1 : 0 });
             lienzo.toggleAttribute("data-activa", activa);
           });
-          mover(indice, 0);
+          // Al volver se entra por el final de la escena: lo que se lee es su última línea.
+          mover(indice, direccion === 1 ? 0 : ultimoTiempo(indice));
           if (!iniciado) return;
           const lineas = lienzos[indice]?.querySelector<HTMLElement>(".velocidad");
           if (lineas) lineas.dataset.direccion = direccion === 1 ? "bajando" : "subiendo";
@@ -233,6 +236,11 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
               return [i === 0 ? 0 : seccion.getBoundingClientRect().top + window.scrollY + window.innerHeight * 0.1];
             })
             .sort((a, b) => a - b);
+        const paradaHacia = (direccion: 1 | -1) => {
+          const actual = window.scrollY;
+          const todas = paradas();
+          return direccion === 1 ? todas.find((top) => top > actual + 4) : todas.findLast((top) => top < actual - 4);
+        };
         const alTeclear = (evento: KeyboardEvent) => {
           const direccion = TECLAS_PASO[evento.key];
           if (!direccion || evento.altKey || evento.ctrlKey || evento.metaKey) return;
@@ -240,13 +248,39 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
           evento.preventDefault();
           // Dejarla apretada no encadena saltos: un paso por pulsación.
           if (evento.repeat) return;
-          const actual = window.scrollY;
-          const todas = paradas();
-          const destino =
-            direccion === 1 ? todas.find((top) => top > actual + 4) : todas.findLast((top) => top < actual - 4);
+          const destino = paradaHacia(direccion);
           if (destino !== undefined) window.scrollTo({ top: destino, behavior: "smooth" });
         };
         window.addEventListener("keydown", alTeclear);
+
+        // En el teléfono la inercia del dedo recorre más de un momento por gesto
+        // (un título mide ~340 px y un deslizamiento suelta 1000 o más), y cruza
+        // los cortes de golpe. Dentro de la serie el dedo pasa un momento por
+        // gesto, como las flechas; fuera de ella el scroll vuelve a ser nativo.
+        let toque: { x: number; y: number; dio: boolean } | null = null;
+        const alTocar = (evento: TouchEvent) => {
+          const dedo = evento.touches[0];
+          toque = evento.touches.length === 1 && dedo ? { x: dedo.clientX, y: dedo.clientY, dio: false } : null;
+        };
+        const alArrastrar = (evento: TouchEvent) => {
+          const dedo = evento.touches[0];
+          if (!toque || !dedo || !evento.cancelable) return;
+          const dy = toque.y - dedo.clientY;
+          // Un gesto de lado (la galería, un zoom) sigue siendo del navegador.
+          if (Math.abs(dy) < Math.abs(toque.x - dedo.clientX)) return;
+          const direccion = dy > 0 ? 1 : -1;
+          const destino = paradaHacia(direccion);
+          if (destino === undefined) return;
+          evento.preventDefault();
+          if (toque.dio || Math.abs(dy) < UMBRAL_GESTO) return;
+          toque.dio = true;
+          window.scrollTo({ top: destino, behavior: "smooth" });
+        };
+        const alSoltar = () => (toque = null);
+        window.addEventListener("touchstart", alTocar, { passive: true });
+        window.addEventListener("touchmove", alArrastrar, { passive: false });
+        window.addEventListener("touchend", alSoltar, { passive: true });
+        window.addEventListener("touchcancel", alSoltar, { passive: true });
         requestAnimationFrame(() => {
           iniciado = true;
         });
@@ -255,6 +289,10 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
         return () => {
           contenedor.removeEventListener("focusin", alEnfocar);
           window.removeEventListener("keydown", alTeclear);
+          window.removeEventListener("touchstart", alTocar);
+          window.removeEventListener("touchmove", alArrastrar);
+          window.removeEventListener("touchend", alSoltar);
+          window.removeEventListener("touchcancel", alSoltar);
           delete raizHtml.dataset.episodios;
           lienzos.forEach((l) => l?.removeAttribute("data-activa"));
         };

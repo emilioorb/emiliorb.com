@@ -573,7 +573,31 @@
 
 @media (max-width: 767px) {
   .ajedrez-escena {
-    --lado: min(100%, 28svh);
+    --lado: min(100%, 26svh);
+    gap: clamp(1rem, 3svh, 1.5rem);
+    /* Respiro sobre los subtítulos: sin él, el último enlace queda pegado al narrador. */
+    padding-bottom: clamp(1rem, 4svh, 2.5rem);
+  }
+
+  .tablero {
+    justify-self: center;
+  }
+
+  .ajedrez-escena__texto {
+    gap: 0.5rem;
+  }
+
+  .ajedrez-escena__frase {
+    font-size: clamp(1.25rem, 3.6svh, 1.75rem);
+  }
+}
+
+/* Teléfono con las dos barras del navegador a la vista: el tablero cede alto
+   para que el texto no se meta bajo la cabecera ni sobre los subtítulos. */
+@media (max-width: 767px) and (max-height: 760px) {
+  .ajedrez-escena {
+    --lado: min(100%, 20svh);
+    padding-bottom: 0.75rem;
   }
 }
 
@@ -928,17 +952,14 @@ html[data-cine="quieto"] .controles-cine {
   }
 }
 
-/* En el teléfono no caben las tres piezas: queda el episodio y el contacto. */
+/* En el teléfono no caben las tres piezas: queda el nombre y el contacto. El
+   episodio ya lo dice su tarjeta de título y lo repite el narrador. */
 @media (max-width: 480px) {
-  .cabecera-serie__nombre {
+  .cabecera-serie__episodio {
     display: none;
   }
   .cabecera-serie {
     grid-template-columns: minmax(0, 1fr) auto;
-  }
-  .cabecera-serie__episodio {
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
   }
 }
 
