@@ -109,25 +109,6 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
     if (evento.target instanceof Element && evento.target.closest('[data-accion="cine"]')) entrarEnCine();
   };
 
-  // El theme-color (Chrome en Android) seguía al tema del sistema: en claro
-  // quedaba blanco encima de una escena invertida. Safari 26 no lo lee; ahí
-  // mandan los fondos de la cabecera y de los subtítulos.
-  const tono = escenas[momento.escena]?.tono ?? "claro";
-  useEffect(() => {
-    const raizHtml = document.documentElement;
-    const consulta = window.matchMedia("(prefers-color-scheme: dark)");
-    const pintarBarra = () => {
-      const barra = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-      if (!barra) return;
-      const variable = tono === "invertido" ? "--tinta" : "--fondo";
-      barra.content = getComputedStyle(raizHtml).getPropertyValue(variable).trim();
-    };
-    pintarBarra();
-    // Base repinta la barra al cambiar el tema; esto corre después y la corrige.
-    consulta.addEventListener("change", pintarBarra);
-    return () => consulta.removeEventListener("change", pintarBarra);
-  }, [tono]);
-
   // En modo cine la interfaz se apaga; vuelve mientras el visitante mueve el mouse.
   useEffect(() => {
     const raizHtml = document.documentElement;

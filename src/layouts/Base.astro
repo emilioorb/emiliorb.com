@@ -120,13 +120,14 @@ const personaJsonLd = {
   </head>
 
   {/* Columna a todo el alto: en páginas cortas el pie quedaba a media pantalla. */}
-  <body class="flex min-h-dvh flex-col font-sans antialiased">
+  <body class="flex min-h-dvh flex-col font-sans antialiased" data-lectura={cabecera ? "" : undefined}>
     <ScrollSuave />
     {
       cabecera && (
         <CabeceraSerie
           rotulo={cabecera}
           tono="claro"
+          conFondo
           rutas={{ inicio: rutaDe(idioma), contacto: rutaDe(idioma, "#proximo"), otroIdioma: rutas[otro], volver }}
           textos={t.serie}
         />

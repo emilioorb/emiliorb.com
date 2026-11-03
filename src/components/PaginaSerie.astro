@@ -23,7 +23,6 @@ interface Props {
 const { idioma, escenas, rutas, meta, inicio, contacto, volver } = Astro.props;
 const otro: Idioma = idioma === "es" ? "en" : "es";
 const rutasSerie: RutasSerie = { inicio, contacto, otroIdioma: rutas[otro], volver };
-const tonoInicial = escenas[0]?.tono ?? "claro";
 ---
 
 <Base idioma={idioma} rutas={rutas} meta={meta} cabecera={false}>
@@ -36,15 +35,6 @@ const tonoInicial = escenas[0]?.tono ?? "claro";
     document.documentElement.dataset.sinBarra = "";
     if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
       document.documentElement.dataset.episodios = "escenario";
-    }
-  </script>
-  {/* El theme-color (Chrome en Android) toma el color de la primera escena desde
-      el primer pintado; después la isla lo sigue escena por escena. */}
-  <script is:inline define:vars={{ tonoInicial }}>
-    const raizHtml = document.documentElement;
-    const barra = document.querySelector('meta[name="theme-color"]');
-    if (barra && tonoInicial === "invertido") {
-      barra.content = getComputedStyle(raizHtml).getPropertyValue("--tinta").trim();
     }
   </script>
   <Episodios client:load escenas={escenas} rutas={rutasSerie} textos={TEXTOS[idioma].serie} />
