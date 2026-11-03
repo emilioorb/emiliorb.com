@@ -1123,7 +1123,8 @@ body[data-lectura]::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 40;
+  /* Por encima de la cabecera (55): debajo, su fondo liso se veía como una franja más clara. */
+  z-index: 60;
   pointer-events: none;
   opacity: 0.09;
   background-image: var(--grano);
