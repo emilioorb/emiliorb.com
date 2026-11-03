@@ -1,5 +1,16 @@
 ---
-import Pagina from "../components/Pagina.astro";
+import PaginaSerie from "../components/PaginaSerie.astro";
+import { TEXTOS, rutaDe } from "../i18n/ui";
+import { cargarGuion } from "../lib/episodios/cargar";
+
+const escenas = await cargarGuion("es");
 ---
 
-<Pagina idioma="es" />
+<PaginaSerie
+  idioma="es"
+  escenas={escenas}
+  rutas={{ es: rutaDe("es"), en: rutaDe("en") }}
+  meta={TEXTOS.es.meta}
+  inicio="#apertura"
+  contacto="#proximo"
+/>

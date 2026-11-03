@@ -1,0 +1,24 @@
+---
+import PaginaSerie from "./PaginaSerie.astro";
+import { rutasProyecto, type Idioma } from "../i18n/ui";
+import { construirFicha } from "../lib/episodios/fichas";
+import { rutasSerie } from "../lib/episodios/rutas";
+import type { Proyecto } from "../data/contenido";
+
+interface Props {
+  idioma: Idioma;
+  proyecto: Proyecto;
+}
+
+const { idioma, proyecto } = Astro.props;
+const serie = rutasSerie(idioma);
+---
+
+<PaginaSerie
+  idioma={idioma}
+  escenas={construirFicha(proyecto.slug, idioma)}
+  rutas={rutasProyecto(proyecto.slug)}
+  meta={{ titulo: `${proyecto.nombre} — Emilio Rodríguez`, descripcion: proyecto.resumen[idioma] }}
+  inicio={serie.inicio}
+  contacto={serie.contacto}
+/>

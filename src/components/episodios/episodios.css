@@ -1,0 +1,1100 @@
+/* «Episodios»: el sitio en escenas. Monocromo, Geist, cortes secos. */
+
+/* Grano de película, quieto: lo comparten las escenas y las páginas de lectura. */
+:root {
+  --grano: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1.6 -.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* Solo en las páginas de la serie, como en una sala de cine: el atributo lo
+   pone su script antes del primer pintado. El scroll sigue igual. */
+:root[data-sin-barra] {
+  scrollbar-width: none;
+}
+
+:root[data-sin-barra]::-webkit-scrollbar {
+  display: none;
+}
+
+.episodios {
+  /* Lo que el subtítulo ocupa abajo; ninguna escena pone contenido ahí. */
+  --zona-subtitulos: clamp(6.5rem, 14svh, 8.5rem);
+  /* Texto secundario sobre las tarjetas invertidas: el `tinta-suave` del otro
+     tema, que es el que ya está medido contra ese fondo (AA en los dos). */
+  --tinta-suave-inv: #8d8d94;
+  position: relative;
+  isolation: isolate;
+}
+
+/* La cabecera de la serie vive fuera de `.episodios` y también se invierte. */
+.cabecera-serie {
+  --tinta-suave-inv: #8d8d94;
+}
+
+:root[data-tema="oscuro"] .episodios,
+:root[data-tema="oscuro"] .cabecera-serie {
+  --tinta-suave-inv: #6b6b70;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .episodios,
+  :root:not([data-tema="claro"]) .cabecera-serie {
+    --tinta-suave-inv: #6b6b70;
+  }
+}
+
+/* Debajo de 1024 el subtítulo sube por encima de los dos botones. */
+@media (max-width: 1023px) {
+  .episodios {
+    --zona-subtitulos: 11rem;
+  }
+}
+
+.escena {
+  position: relative;
+  z-index: var(--orden);
+}
+
+.escena__lienzo {
+  --suave: var(--tinta-suave);
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(var(--alto-cabecera) + 1rem) var(--pad-seccion) var(--zona-subtitulos);
+  overflow: clip;
+  background: var(--fondo);
+  color: var(--tinta);
+}
+
+.escena[data-tono="invertido"] .escena__lienzo {
+  --suave: var(--tinta-suave-inv);
+  background: var(--tinta);
+  color: var(--fondo);
+}
+
+/* Grano de película, quieto: textura, no movimiento. */
+.escena__lienzo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.09;
+  background-image: var(--grano);
+  background-size: 180px;
+}
+
+.escena__contenido {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  /* 64rem y no 80: en una laptop (1280–1440 px) la columna de 80rem ocupaba casi
+     todo el ancho y el texto quedaba pegado a la izquierda; así se centra igual
+     que en un monitor grande. */
+  max-width: 64rem;
+  margin-inline: auto;
+}
+
+/* El escenario: cada escena se queda fija su recorrido y la siguiente la
+   tapa en el mismo instante en que se suelta. Solo con movimiento; el
+   atributo lo pone un script antes del primer pintado. */
+:root[data-episodios="escenario"] .escena {
+  height: calc(var(--largo) * 1svh);
+  /* Las escenas se apilan con un solape de 100svh: la de abajo, invisible, taparía
+     los clics de la de arriba. Solo el lienzo activo los recibe. */
+  pointer-events: none;
+  /* El corte a una escena ocurre cuando su borde llega arriba: un ancla que frena
+     antes (el margen del sitio) deja ver la anterior. Aquí aterriza ya adentro. */
+  scroll-margin-top: -10svh;
+}
+
+:root[data-episodios="escenario"] .escena__lienzo[data-activa] {
+  pointer-events: auto;
+}
+
+:root[data-episodios="escenario"] .escena + .escena {
+  margin-top: -100svh;
+}
+
+:root[data-episodios="escenario"] .escena__lienzo {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 0;
+}
+
+:root[data-episodios="escenario"] .escena:not(:first-child) .escena__lienzo {
+  opacity: 0;
+}
+
+:root[data-episodios="escenario"] .escena__lienzo:not([data-activa]) {
+  pointer-events: none;
+}
+
+/* Líneas de velocidad: solo existen durante un corte. */
+.velocidad {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.velocidad[data-direccion="subiendo"] {
+  transform: scaleX(-1);
+}
+
+.velocidad span {
+  position: absolute;
+  display: block;
+  background: currentColor;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Rótulo: el número de episodio y sus pares. Uno por escena, nunca dos. */
+.rotulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--suave);
+}
+
+/* Apertura */
+.apertura__nombre {
+  margin: 0;
+  font-size: min(19vw, 19svh, 11.5rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  transform-origin: left bottom;
+}
+
+.apertura__apellido {
+  color: var(--suave);
+}
+
+.apertura__rol {
+  margin: clamp(1rem, 3svh, 1.75rem) 0 0;
+  max-width: 40ch;
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  line-height: 1.4;
+  color: var(--suave);
+}
+
+.apertura__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 2.5rem;
+  margin-top: clamp(1.75rem, 7svh, 4.5rem);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.apertura__invitacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.apertura__guia {
+  position: relative;
+  width: 1px;
+  height: 2rem;
+  overflow: hidden;
+  background: var(--borde);
+}
+
+.apertura__guia::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 40%;
+  background: currentColor;
+  animation: guia 2.4s var(--ease-out) infinite;
+}
+
+@keyframes guia {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(260%);
+  }
+}
+
+/* Tarjeta de título */
+.titulo__h {
+  margin: 0;
+  font-weight: inherit;
+}
+
+.titulo__episodio {
+  display: block;
+  margin-bottom: clamp(1rem, 3.5svh, 2.25rem);
+}
+
+.titulo__texto {
+  display: block;
+  font-size: min(19vw, 22svh, 13.5rem);
+  font-weight: 600;
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  transform-origin: left center;
+}
+
+.titulo__pie {
+  margin: clamp(1.5rem, 5svh, 3rem) 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--suave);
+  font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--suave);
+}
+
+/* Escena de etapa */
+.etapa {
+  display: grid;
+  gap: clamp(1.25rem, 4.5svh, 3.5rem);
+}
+
+.etapa__cabeza {
+  display: grid;
+  gap: 0.5rem 2.5rem;
+  align-items: baseline;
+}
+
+@media (min-width: 768px) {
+  .etapa__cabeza {
+    grid-template-columns: auto 1fr;
+  }
+  .etapa__contexto {
+    grid-column: 1 / -1;
+  }
+}
+
+.etapa__meta {
+  color: inherit;
+}
+
+.etapa__lugares {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--suave);
+}
+
+.etapa__contexto {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(0.95rem, 0.85rem + 0.35vw, 1.125rem);
+  line-height: 1.5;
+  color: var(--suave);
+}
+
+.etapa__pasos {
+  display: grid;
+  gap: clamp(0.5rem, 2.2svh, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.paso {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  column-gap: clamp(0.5rem, 2vw, 2rem);
+  align-items: baseline;
+  padding-bottom: clamp(0.5rem, 1.6svh, 1rem);
+}
+
+.paso__num {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--suave);
+}
+
+.paso__texto {
+  font-size: min(8.6vw, 7.6svh, 5rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.paso[data-remate] .paso__texto {
+  max-width: 24ch;
+  font-weight: 600;
+}
+
+.paso__raya {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--borde);
+  transform-origin: left center;
+}
+
+.paso[data-remate] .paso__raya {
+  height: 2px;
+  background: currentColor;
+}
+
+@media (max-width: 767px) {
+  .paso {
+    grid-template-columns: 1.5rem 1fr;
+  }
+}
+
+/* Enlaces dentro de las escenas: el subrayado toma el color del tono y no
+   alcanza a la flecha. */
+.vinculo {
+  color: inherit;
+  text-decoration: none;
+}
+
+.vinculo__texto,
+.cierre__correo a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .vinculo:hover .vinculo__texto,
+  .cierre__correo a:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Alto táctil de 44px sin agrandar la letra. */
+.vinculo {
+  display: inline-flex;
+  white-space: nowrap;
+  gap: 0.3em;
+  min-height: 44px;
+  align-items: center;
+}
+
+.item__enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.75rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+/* Pasarela */
+.pasarela {
+  display: grid;
+  gap: clamp(1rem, 3.5svh, 2.5rem);
+}
+
+.pasarela__cabeza {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pasarela__avance {
+  position: relative;
+  height: 1px;
+  flex: 1;
+  max-width: 20rem;
+  overflow: hidden;
+  background: var(--borde);
+}
+
+.pasarela__barra {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transform: scaleX(calc(1 / var(--partes)));
+  transform-origin: left center;
+}
+
+.pasarela__items {
+  display: grid;
+  gap: clamp(2.5rem, 8svh, 4rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:root:not([data-episodios="escenario"]) .pasarela__avance {
+  display: none;
+}
+
+:root[data-episodios="escenario"] .pasarela__items {
+  gap: 0;
+}
+
+/* Apiladas en la misma celda: la pasarela mide lo que la más alta, y nada salta. */
+:root[data-episodios="escenario"] .item {
+  grid-area: 1 / 1;
+}
+
+:root[data-episodios="escenario"] .item:not([data-actual]) {
+  pointer-events: none;
+}
+
+.item {
+  display: grid;
+  max-width: 60rem;
+  align-content: start;
+  gap: clamp(0.5rem, 1.8svh, 1rem);
+}
+
+.item__titulo {
+  margin: 0;
+  font-size: min(8.5vw, 9.5svh, 6rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.item[data-largo] .item__titulo {
+  max-width: 30ch;
+  font-size: min(6.4vw, 6.2svh, 3.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.item__linea {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--suave);
+}
+
+.item__meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--suave);
+}
+
+/* Estante */
+.estante {
+  --alto-portada: min(30svh, 19rem);
+  display: grid;
+  gap: clamp(1rem, 3.5svh, 2.5rem);
+}
+
+.estante__cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 2rem;
+}
+
+.estante__libros {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, calc(var(--alto-portada) / 1.5)));
+  gap: clamp(0.75rem, 1.8vw, 1.75rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.libro img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.12),
+    0 8px 24px rgb(0 0 0 / 0.1);
+}
+
+.estante__destacado {
+  display: grid;
+  max-width: 52ch;
+  gap: 0.4rem;
+}
+
+.estante__porque {
+  margin: 0;
+  font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+@media (max-width: 767px) {
+  .estante {
+    --alto-portada: 18svh;
+  }
+  .estante__libros {
+    grid-template-columns: repeat(3, minmax(0, calc(var(--alto-portada) / 1.5)));
+  }
+}
+
+/* Ajedrez */
+.ajedrez-escena {
+  --lado: min(100%, 52svh, 30rem);
+  display: grid;
+  align-items: center;
+  gap: clamp(1.25rem, 4vw, 4rem);
+}
+
+@media (min-width: 768px) {
+  /* Tablero y texto como un solo bloque centrado: con 1fr el texto se iba a la
+     izquierda y dejaba media pantalla vacía en laptops. */
+  .ajedrez-escena[data-con-tablero] {
+    grid-template-columns: min(52svh, 30rem) minmax(0, 32rem);
+    justify-content: center;
+  }
+}
+
+.tablero {
+  display: grid;
+  width: var(--lado);
+  aspect-ratio: 1;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  border: 1px solid var(--borde);
+}
+
+@media (max-width: 767px) {
+  .ajedrez-escena {
+    --lado: min(100%, 28svh);
+  }
+}
+
+.casilla {
+  display: grid;
+  min-height: 0;
+  place-items: center;
+  background: color-mix(in srgb, var(--tinta) 14%, var(--fondo));
+}
+
+.casilla[data-clara] {
+  background: color-mix(in srgb, var(--tinta) 4%, var(--fondo));
+}
+
+/* Las piezas tienen color propio en los dos temas: una pieza blanca es blanca. */
+.pieza {
+  width: 82%;
+  height: 82%;
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.pieza--blanca {
+  fill: #f4f4f5;
+  stroke: #0b0b0c;
+}
+
+.pieza--negra {
+  fill: #0b0b0c;
+  stroke: var(--tinta-suave);
+}
+
+.pieza__detalle {
+  fill: none;
+}
+
+.pieza--negra .pieza__detalle {
+  stroke: #f4f4f5;
+}
+
+.ajedrez-escena__texto {
+  display: grid;
+  max-width: 40ch;
+  gap: 0.75rem;
+}
+
+.ajedrez-escena__frase {
+  margin: 0;
+  font-size: clamp(1.5rem, min(3.2vw, 5svh), 2.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.ajedrez-escena__resumen,
+.ajedrez-escena__cifras {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--suave);
+}
+
+.ajedrez-escena__cifras {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Próximo episodio */
+.cierre__pregunta {
+  margin: clamp(0.75rem, 3svh, 2rem) 0 0;
+  font-size: min(12vw, 14svh, 9rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  transform-origin: left center;
+}
+
+.cierre__correo {
+  margin: clamp(1.5rem, 5svh, 3rem) 0 0;
+  font-size: clamp(1.125rem, 0.9rem + 1.2vw, 2rem);
+  font-weight: 500;
+}
+
+.cierre__correo a {
+  text-underline-offset: 6px;
+}
+
+.cierre__respuesta {
+  margin: 0.5rem 0 0.5rem;
+  color: var(--suave);
+}
+
+/* Subtítulos */
+.subtitulos {
+  position: fixed;
+  z-index: 45;
+  left: 50%;
+  bottom: calc(1.5rem + 44px + 0.75rem + env(safe-area-inset-bottom));
+  width: min(40rem, calc(100% - 2 * var(--pad-seccion)));
+  transform: translateX(-50%);
+  pointer-events: none;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .subtitulos {
+    bottom: calc(1.75rem + env(safe-area-inset-bottom));
+  }
+}
+
+.subtitulos__linea {
+  display: inline-block;
+  margin: 0;
+  font-size: clamp(0.98rem, 0.9rem + 0.35vw, 1.2rem);
+  font-weight: 450;
+  line-height: 1.45;
+  text-wrap: balance;
+  color: var(--tinta);
+  animation: subtitulo 320ms var(--ease-out) both;
+}
+
+:root[data-episodios="escenario"] .subtitulos[data-tono="invertido"] .subtitulos__linea {
+  color: var(--fondo);
+}
+
+/* Sin escenario el contenido pasa por debajo del subtítulo: lleva placa. */
+:root:not([data-episodios="escenario"]) .subtitulos__linea {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--fondo);
+}
+
+@keyframes subtitulo {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Máquina de escribir: cada letra pasa de invisible a plena en 160 ms, solo opacidad. */
+.subtitulos__palabra {
+  white-space: nowrap;
+}
+
+.subtitulos__letra {
+  opacity: 0;
+  animation: letra 160ms var(--ease-out) forwards;
+}
+
+@keyframes letra {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes subtitulo-suave {
+  from {
+    opacity: 0;
+  }
+}
+
+
+
+@media (prefers-reduced-motion: reduce) {
+  .apertura__guia::after {
+    animation: none;
+    transform: translateY(75%);
+  }
+  .subtitulos__linea {
+    animation-name: subtitulo-suave;
+  }
+  /* Con menos movimiento la línea llega entera, con un fundido. */
+  .subtitulos__letra {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* Modo cine: el botón de la portada y lo que se apaga mientras la serie corre. */
+/* Un enlace más de la portada, no un botón de landing: misma letra y mismo
+   subrayado que el resto del sitio. */
+.apertura__cine {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tinta);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--borde);
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: text-decoration-color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .apertura__cine:hover {
+    text-decoration-color: var(--tinta);
+  }
+}
+
+html[data-cine] .cabecera-serie {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-100%);
+  transition:
+    opacity 400ms var(--ease-out),
+    transform 400ms var(--ease-out);
+}
+
+html[data-cine="quieto"] {
+  cursor: none;
+}
+
+.controles-cine {
+  position: fixed;
+  z-index: 60;
+  top: calc(1.25rem + env(safe-area-inset-top));
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  transition: opacity 300ms var(--ease-out);
+}
+
+html[data-cine="quieto"] .controles-cine {
+  opacity: 0;
+}
+
+/* «Salir» va como «Contacto» en la cabecera: texto con subrayado fino, sin caja. */
+.controles-cine__boton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tinta);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--borde);
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: text-decoration-color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .controles-cine__boton:hover {
+    text-decoration-color: var(--tinta);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-cine] .cabecera-serie {
+    transform: none;
+    transition: none;
+  }
+}
+
+
+.cabecera-serie {
+  --c-tinta: var(--tinta);
+  --c-suave: var(--tinta-suave);
+  --c-borde: var(--borde);
+  position: fixed;
+  z-index: 55;
+  inset: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: calc(1.25rem + env(safe-area-inset-top)) var(--pad-seccion, 1.5rem) 0;
+  pointer-events: none;
+  transition:
+    opacity 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+}
+
+/* Sobre una tarjeta invertida la cabecera usaba los colores de la página y
+   quedaba en blanco sobre blanco: toma los de la escena, como los subtítulos. */
+:root[data-episodios="escenario"] .cabecera-serie[data-tono="invertido"] {
+  --c-tinta: var(--fondo);
+  --c-suave: var(--tinta-suave-inv);
+  --c-borde: color-mix(in srgb, var(--fondo) 35%, var(--tinta));
+}
+
+.cabecera-serie > * {
+  pointer-events: auto;
+}
+
+.cabecera-serie__nombre {
+  justify-self: start;
+  color: var(--c-tinta);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cabecera-serie__episodio {
+  margin: 0;
+  color: var(--c-suave);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* Un rótulo largo (el nombre de un proyecto) se corta antes de pisar el contacto. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cabecera-serie__derecha {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.cabecera-serie__idioma {
+  color: var(--c-suave);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cabecera-serie__idioma:hover {
+    color: var(--c-tinta);
+  }
+}
+
+.cabecera-serie__contacto {
+  color: var(--c-tinta);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--c-borde);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cabecera-serie__contacto:hover {
+    text-decoration-color: var(--c-tinta);
+  }
+}
+
+/* En el teléfono no caben las tres piezas: queda el episodio y el contacto. */
+@media (max-width: 480px) {
+  .cabecera-serie__nombre {
+    display: none;
+  }
+  .cabecera-serie {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .cabecera-serie__episodio {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabecera-serie {
+    transition: opacity 200ms linear;
+  }
+}
+
+/* Fichas de proyecto */
+
+/* Un ancla a una escena aterriza 2px adentro de ella: justo en el borde el
+   corte todavía no ocurrió, y el margen global de 6rem la dejaría en la anterior. */
+.escena {
+  scroll-margin-top: -2px;
+}
+
+.titulo[data-largo] .titulo__texto {
+  max-width: 14ch;
+  font-size: min(11vw, 13svh, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.sintesis {
+  display: grid;
+  gap: clamp(1rem, 3.5svh, 2rem);
+}
+
+.sintesis__texto {
+  margin: 0;
+  max-width: 24ch;
+  font-size: clamp(1.5rem, min(5.6vw, 6.4svh), 3.75rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.sintesis[data-largo] .sintesis__texto {
+  max-width: 34ch;
+  font-size: clamp(1.2rem, min(3.6vw, 4.2svh), 2.5rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+.balance {
+  display: grid;
+  gap: clamp(1rem, 3.5svh, 2.25rem);
+}
+
+.balance__resultados {
+  display: grid;
+  gap: clamp(0.5rem, 2.2svh, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultado {
+  position: relative;
+  padding-bottom: clamp(0.5rem, 1.6svh, 1rem);
+}
+
+.resultado__texto {
+  display: block;
+  max-width: 30ch;
+  font-size: clamp(1.35rem, min(4.4vw, 5.2svh), 3rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.resultado__raya {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--borde);
+  transform-origin: left center;
+}
+
+.balance__stack {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.balance__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.3rem);
+  font-weight: 500;
+}
+
+/* El punto cuelga del final de cada pieza: al partir el renglón, ninguno empieza con «·». */
+.balance__lista li:not(:last-child)::after {
+  content: "·";
+  padding-inline: 0.6em;
+  color: var(--suave);
+}
+
+.salida__antetitulo {
+  margin: clamp(1rem, 4svh, 2.5rem) 0 0;
+  color: var(--suave);
+}
+
+.salida__siguiente {
+  margin: 0.4rem 0 clamp(1rem, 4svh, 2.25rem);
+  max-width: 16ch;
+  font-size: min(9vw, 11svh, 6.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  transform-origin: left center;
+}
+
+.salida__siguiente a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.salida__siguiente .vinculo__texto {
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 0.04em;
+}
+
+/* Sin resultados, el stack es la idea de la escena y se dibuja grande. */
+.balance[data-solo-stack] .balance__lista {
+  gap: 0.2em 0;
+  font-size: clamp(1.6rem, min(5vw, 6.5svh), 3.75rem);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+/* Páginas de lectura (investigación, libros): la misma cabecera, con fondo
+   porque el texto pasa por debajo, y el mismo grano quieto de las escenas. */
+.cabecera-serie[data-con-fondo] {
+  padding-bottom: 1rem;
+  background: var(--fondo);
+}
+
+body[data-lectura]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.09;
+  background-image: var(--grano);
+  background-size: 180px;
+}
+

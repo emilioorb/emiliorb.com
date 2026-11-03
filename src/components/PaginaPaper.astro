@@ -19,7 +19,7 @@ const etiqueta = "text-xs font-medium tracking-[0.12em] text-tinta-suave upperca
 const parrafo = "mt-3 text-sm leading-relaxed text-tinta-suave";
 ---
 
-<Base idioma={idioma} rutas={rutasPaper(paper.slug)} meta={meta}>
+<Base idioma={idioma} rutas={rutasPaper(paper.slug)} meta={meta} cabecera={ti.titulo}>
   <article class="mx-auto max-w-2xl px-6 pt-32 pb-[var(--aire-seccion-bottom)] sm:pt-40">
     <a
       href={RUTAS_INVESTIGACION[idioma]}

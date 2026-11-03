@@ -13,10 +13,33 @@ import sitemap from "@astrojs/sitemap";
  * siempre dice lo mismo es una señal que Google deja de mirar. Al editar el
  * contenido de verdad, mover esta fecha.
  */
-const ULTIMA_ACTUALIZACION = new Date("2026-09-20T00:00:00-06:00");
+const ULTIMA_ACTUALIZACION = new Date("2026-11-02T00:00:00-06:00");
+
+const SITIO = "https://emiliorb.com";
+
+/** Los slugs de cada sección en los dos idiomas, como en `src/i18n/ui.ts`. */
+const SECCIONES = [
+  { es: "/proyectos/", en: "/en/projects/" },
+  { es: "/investigacion/", en: "/en/research/" },
+  { es: "/libros/", en: "/en/books/" },
+];
+
+/**
+ * La misma página en español y en inglés, o `null` si no tiene par.
+ * @param {string} ruta
+ * @returns {{ es: string; en: string } | null}
+ */
+function parDeIdiomas(ruta) {
+  if (ruta === "/" || ruta === "/en/") return { es: "/", en: "/en/" };
+  for (const seccion of SECCIONES) {
+    if (ruta.startsWith(seccion.es)) return { es: ruta, en: seccion.en + ruta.slice(seccion.es.length) };
+    if (ruta.startsWith(seccion.en)) return { es: seccion.es + ruta.slice(seccion.en.length), en: ruta };
+  }
+  return null;
+}
 
 export default defineConfig({
-  site: "https://emiliorb.com",
+  site: SITIO,
 
   // Español en la raíz, inglés bajo /en. `prefixDefaultLocale: false` deja
   // emiliorb.com sin prefijo, que es la URL que la gente ya conoce.
@@ -29,17 +52,35 @@ export default defineConfig({
     },
   },
 
+  // Rutas que existieron y pueden estar enlazadas desde afuera. La vista previa
+  // de la serie pasó a ser el sitio; «Sobre mí» es hoy el episodio 6.
+  redirects: {
+    "/nuevo": "/",
+    "/nuevo/proyectos/[slug]": "/proyectos/[slug]",
+    "/sobre-mi": "/#ep6-titulo",
+    "/en/about": "/en/#ep6-titulo",
+  },
+
   integrations: [
     react(),
-    // Con `i18n` el sitemap emite los `xhtml:link` alternos de cada URL, que es
-    // lo que le dice a Google que / y /en son la misma página en dos idiomas.
+    // Cada URL lleva sus `xhtml:link` alternos, que le dicen a Google que las
+    // dos son la misma página en dos idiomas. El `i18n` del sitemap solo empareja
+    // rutas con el mismo slug (/ y /en/); /libros y /en/books no lo tienen.
     sitemap({
-      i18n: {
-        defaultLocale: "es",
-        locales: { es: "es", en: "en" },
-      },
       // Sin `lastmod` el sitemap no aporta nada que la propia URL no diga ya.
-      serialize: (item) => ({ ...item, lastmod: ULTIMA_ACTUALIZACION.toISOString() }),
+      serialize: (item) => {
+        const pares = parDeIdiomas(new URL(item.url).pathname);
+        return {
+          ...item,
+          lastmod: ULTIMA_ACTUALIZACION.toISOString(),
+          links: pares
+            ? [
+                { lang: "es", url: new URL(pares.es, SITIO).href },
+                { lang: "en", url: new URL(pares.en, SITIO).href },
+              ]
+            : [],
+        };
+      },
     }),
   ],
   vite: { plugins: [tailwindcss()] },

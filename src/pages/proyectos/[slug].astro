@@ -1,0 +1,19 @@
+---
+import PaginaFicha from "../../components/PaginaFicha.astro";
+import { PROYECTOS, PROYECTOS_PERSONALES, type Proyecto } from "../../data/contenido";
+
+export function getStaticPaths() {
+  return [...PROYECTOS, ...PROYECTOS_PERSONALES].map((proyecto) => ({
+    params: { slug: proyecto.slug },
+    props: { proyecto },
+  }));
+}
+
+interface Props {
+  proyecto: Proyecto;
+}
+
+const { proyecto } = Astro.props;
+---
+
+<PaginaFicha idioma="es" proyecto={proyecto} />

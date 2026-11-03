@@ -1,0 +1,39 @@
+---
+// Una página contada como la serie: la portada (Episodios) y cada ficha de
+// proyecto. La isla dibuja su propia cabecera, que sigue el tono de cada escena.
+import Base from "../layouts/Base.astro";
+import Episodios from "./islas/Episodios";
+import { TEXTOS, type Idioma } from "../i18n/ui";
+import type { Escena } from "../lib/episodios/tipos";
+import type { RutasSerie } from "./episodios/CabeceraSerie";
+
+interface Props {
+  idioma: Idioma;
+  escenas: readonly Escena[];
+  /** Esta página en cada idioma: alimenta el hreflang y el enlace al otro idioma. */
+  rutas: Record<Idioma, string>;
+  meta: { titulo: string; descripcion: string };
+  /** A dónde llevan el nombre y el contacto de la cabecera. */
+  inicio: string;
+  contacto: string;
+}
+
+const { idioma, escenas, rutas, meta, inicio, contacto } = Astro.props;
+const otro: Idioma = idioma === "es" ? "en" : "es";
+const rutasSerie: RutasSerie = { inicio, contacto, otroIdioma: rutas[otro] };
+---
+
+<Base idioma={idioma} rutas={rutas} meta={meta} cabecera={false}>
+  {/* Antes de pintar las escenas: con movimiento, el escenario las apila y
+      esconde las que todavía no tocan. Si se decidiera al hidratar, la
+      segunda escena se vería un instante debajo de la primera. */}
+  <script is:inline>
+    // Sin barra de desplazamiento, como en una sala de cine: se marca antes
+    // del primer pintado para que el ancho no cambie después.
+    document.documentElement.dataset.sinBarra = "";
+    if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+      document.documentElement.dataset.episodios = "escenario";
+    }
+  </script>
+  <Episodios client:load escenas={escenas} rutas={rutasSerie} textos={TEXTOS[idioma].serie} />
+</Base>

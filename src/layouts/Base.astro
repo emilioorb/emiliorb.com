@@ -1,10 +1,9 @@
 ---
 import "../styles/global.css";
+import "../components/episodios/episodios.css";
 import ScrollSuave from "../components/ScrollSuave.astro";
-import FondoEstrellas from "../components/islas/FondoEstrellas";
-import Encabezado from "../components/Encabezado.astro";
-import CambioTema from "../components/CambioTema.astro";
 import Pie from "../components/Pie.astro";
+import { CabeceraSerie } from "../components/episodios/CabeceraSerie";
 import { TEXTOS, rutaDe, type Idioma } from "../i18n/ui";
 import { REDES, TRABAJO, enIdioma } from "../data/contenido";
 
@@ -13,9 +12,16 @@ interface Props {
   /** La misma página en cada idioma; por defecto, la portada. */
   rutas?: Record<Idioma, string>;
   meta?: { titulo: string; descripcion: string };
+  /**
+   * El rótulo de la cabecera de la serie en una página de lectura. `false`
+   * cuando la página es la serie misma: ahí la isla dibuja su propia cabecera.
+   */
+  cabecera: string | false;
+  /** Una escena que ocupa la pantalla justa (la librería) no lleva pie: abriría scroll. */
+  pie?: boolean;
 }
 
-const { idioma } = Astro.props;
+const { idioma, cabecera, pie = true } = Astro.props;
 const t = TEXTOS[idioma];
 const rutas = Astro.props.rutas ?? { es: rutaDe("es"), en: rutaDe("en") };
 const meta = Astro.props.meta ?? t.meta;
@@ -37,7 +43,13 @@ const personaJsonLd = {
   url: new URL(rutaDe(idioma), Astro.site).href,
   // Cargos y empresas salen de los puestos vigentes, no del antetítulo: ese
   // incluye la empresa, que ya va aparte en `worksFor`.
-  jobTitle: puestosVigentes.map((puesto) => enIdioma(puesto.cargo, idioma)),
+  // La disciplina va antes que el cargo: es por lo que se busca a una persona.
+  jobTitle: [
+    "Software Engineer",
+    "AI Engineer",
+    ...puestosVigentes.map((puesto) => enIdioma(puesto.cargo, idioma)),
+  ],
+  knowsAbout: ["Software Engineering", "AI Engineering", "Engineering standards"],
   worksFor: puestosVigentes.map((puesto) => ({
     "@type": "Organization",
     name: puesto.empresa,
@@ -86,35 +98,42 @@ const personaJsonLd = {
     <meta name="theme-color" content="#ffffff" />
 
     {/* Sin diferir: el atributo tiene que existir ANTES del primer pintado o
-        la página parpadea en claro antes de pasar a oscuro. */}
+        la página parpadea en claro antes de pasar a oscuro. El tema sigue al
+        sistema: la serie no tiene botón de tema, y una elección guardada
+        antes no tendría cómo deshacerse. */}
     <script is:inline>
       (() => {
         const raiz = document.documentElement;
-        let elegido = null;
-        try {
-          elegido = localStorage.getItem("tema");
-        } catch {}
-        const oscuro =
-          elegido === "oscuro" ||
-          (elegido !== "claro" &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches);
-        raiz.dataset.tema = oscuro ? "oscuro" : "claro";
-        const barra = document.querySelector('meta[name="theme-color"]');
-        if (barra) barra.content = oscuro ? "#0b0b0c" : "#ffffff";
+        const consulta = window.matchMedia("(prefers-color-scheme: dark)");
+        const aplicar = () => {
+          const oscuro = consulta.matches;
+          raiz.dataset.tema = oscuro ? "oscuro" : "claro";
+          const barra = document.querySelector('meta[name="theme-color"]');
+          if (barra) barra.content = oscuro ? "#0b0b0c" : "#ffffff";
+        };
+        aplicar();
+        consulta.addEventListener("change", aplicar);
       })();
     </script>
   </head>
 
   {/* Columna a todo el alto: en páginas cortas el pie quedaba a media pantalla. */}
-  <body class="flex min-h-dvh flex-col font-sans antialiased">
+  <body class="flex min-h-dvh flex-col font-sans antialiased" data-lectura={cabecera ? "" : undefined}>
     <ScrollSuave />
-    {/* `client:idle`: es decoración, puede esperar a que el hilo se libere. */}
-    <FondoEstrellas client:idle />
-    <Encabezado idioma={idioma} rutaOtro={rutas[otro]} />
+    {
+      cabecera && (
+        <CabeceraSerie
+          rotulo={cabecera}
+          tono="claro"
+          conFondo
+          rutas={{ inicio: rutaDe(idioma), contacto: rutaDe(idioma, "#proximo"), otroIdioma: rutas[otro] }}
+          textos={t.serie}
+        />
+      )
+    }
     <main class="flex-1">
       <slot />
     </main>
-    <Pie idioma={idioma} />
-    <CambioTema idioma={idioma} />
+    {pie && <Pie idioma={idioma} />}
   </body>
 </html>

@@ -17,6 +17,9 @@
 
 :root {
   color-scheme: light;
+  /* Chromium no repinta la barra de la ventana cuando cambia `color-scheme` en
+     vivo: con colores propios sí, porque cambian las variables. */
+  scrollbar-color: color-mix(in srgb, var(--tinta) 28%, var(--fondo)) var(--fondo);
   --alto-cabecera: 80px;
   /* El mínimo tiene que ser el mismo canalón que usan las secciones (`px-6`,
      24px): por debajo de `max-w-4xl` la columna no topa y ambos bordes son el
