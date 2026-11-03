@@ -109,12 +109,12 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
     if (evento.target instanceof Element && evento.target.closest('[data-accion="cine"]')) entrarEnCine();
   };
 
-  // La barra del navegador (theme-color, y en Safari el fondo del body) seguía al
-  // tema del sistema: en claro quedaba blanca encima de una escena invertida.
+  // El theme-color (Chrome en Android) seguía al tema del sistema: en claro
+  // quedaba blanco encima de una escena invertida. Safari 26 no lo lee; ahí
+  // mandan los fondos de la cabecera y de los subtítulos.
   const tono = escenas[momento.escena]?.tono ?? "claro";
   useEffect(() => {
     const raizHtml = document.documentElement;
-    raizHtml.dataset.tonoEscena = tono;
     const consulta = window.matchMedia("(prefers-color-scheme: dark)");
     const pintarBarra = () => {
       const barra = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');

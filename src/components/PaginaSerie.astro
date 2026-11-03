@@ -38,11 +38,10 @@ const tonoInicial = escenas[0]?.tono ?? "claro";
       document.documentElement.dataset.episodios = "escenario";
     }
   </script>
-  {/* La barra del navegador toma el color de la primera escena desde el primer
-      pintado; después la isla la sigue escena por escena. */}
+  {/* El theme-color (Chrome en Android) toma el color de la primera escena desde
+      el primer pintado; después la isla lo sigue escena por escena. */}
   <script is:inline define:vars={{ tonoInicial }}>
     const raizHtml = document.documentElement;
-    raizHtml.dataset.tonoEscena = tonoInicial;
     const barra = document.querySelector('meta[name="theme-color"]');
     if (barra && tonoInicial === "invertido") {
       barra.content = getComputedStyle(raizHtml).getPropertyValue("--tinta").trim();

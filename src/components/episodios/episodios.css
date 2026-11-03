@@ -49,11 +49,6 @@
   }
 }
 
-/* Safari 26 ya no lee theme-color: tiñe su barra con el fondo del body. */
-:root[data-tono-escena="invertido"] body {
-  background: var(--tinta);
-}
-
 .escena {
   position: relative;
   z-index: var(--orden);
@@ -68,35 +63,24 @@
   justify-content: center;
   padding: calc(var(--alto-cabecera) + 1rem) var(--pad-seccion) var(--zona-subtitulos);
   overflow: clip;
-  /* El fondo va en ::before y no en el lienzo: Safari 26 tiñe sus barras con el
-     background-color de cualquier sticky que toque el borde, aunque esté en
-     opacity 0, y con las escenas apiladas tomaba la que no se ve. Así cae al
-     fondo del body, que sigue el tono de la escena activa. */
-  isolation: isolate;
-  --fondo-lienzo: var(--fondo);
+  background: var(--fondo);
   color: var(--tinta);
-}
-
-.escena__lienzo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--fondo-lienzo);
 }
 
 .escena[data-tono="invertido"] .escena__lienzo {
   --suave: var(--tinta-suave-inv);
-  --fondo-lienzo: var(--tinta);
+  background: var(--tinta);
   color: var(--fondo);
 }
 
-/* Grano de película, quieto: textura, no movimiento. */
-.escena__lienzo::after {
+/* Grano de película, quieto: textura, no movimiento. Una sola capa fija por
+   encima de todo, cabecera y subtítulos incluidos: debajo, sus fondos lisos
+   se verían como franjas. */
+body::after {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 4;
+  z-index: 60;
   pointer-events: none;
   opacity: 0.09;
   background-image: var(--grano);
@@ -104,12 +88,12 @@
 }
 
 /* De prueba: en oscuro el fondo queda sólido, como en claro, sin el grano encima. */
-:root[data-tema="oscuro"] :is(.escena__lienzo, body[data-lectura])::after {
+:root[data-tema="oscuro"] body::after {
   opacity: 0;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-tema="claro"]) :is(.escena__lienzo, body[data-lectura])::after {
+  :root:not([data-tema="claro"]) body::after {
     opacity: 0;
   }
 }
@@ -822,26 +806,33 @@
   color: var(--suave);
 }
 
-/* Subtítulos */
+/* Subtítulos: una barra fija de borde a borde con el fondo de la escena, como
+   la cabecera. Safari 26 tiñe su barra de abajo con el background-color del
+   fixed que toca el borde; sin ella tomaba el lienzo sticky de pantalla
+   completa, y a esos les conserva el primer color que les leyó. */
 .subtitulos {
   position: fixed;
   z-index: 45;
-  left: 50%;
-  bottom: calc(1.5rem + 44px + 0.75rem + env(safe-area-inset-bottom));
-  width: min(40rem, calc(100% - 2 * var(--pad-seccion)));
-  transform: translateX(-50%);
+  inset: auto 0 0;
+  padding: 0.75rem var(--pad-seccion) calc(1.5rem + 44px + 0.75rem + env(safe-area-inset-bottom));
   pointer-events: none;
   text-align: center;
+  background: var(--fondo);
+}
+
+:root[data-episodios="escenario"] .subtitulos[data-tono="invertido"] {
+  background: var(--tinta);
 }
 
 @media (min-width: 1024px) {
   .subtitulos {
-    bottom: calc(1.75rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(1.75rem + env(safe-area-inset-bottom));
   }
 }
 
 .subtitulos__linea {
   display: inline-block;
+  max-width: 40rem;
   margin: 0;
   font-size: clamp(0.98rem, 0.9rem + 0.35vw, 1.2rem);
   font-weight: 450;
@@ -853,14 +844,6 @@
 
 :root[data-episodios="escenario"] .subtitulos[data-tono="invertido"] .subtitulos__linea {
   color: var(--fondo);
-}
-
-/* Sin escenario el contenido pasa por debajo del subtítulo: lleva placa. */
-:root:not([data-episodios="escenario"]) .subtitulos__linea {
-  padding: 0.55rem 1rem;
-  border: 1px solid var(--borde);
-  border-radius: 14px;
-  background: var(--fondo);
 }
 
 @keyframes subtitulo {
@@ -1002,7 +985,11 @@ html[data-cine="quieto"] .controles-cine {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 1rem;
-  padding: calc(1.25rem + env(safe-area-inset-top)) var(--pad-seccion, 1.5rem) 0;
+  padding: calc(1.25rem + env(safe-area-inset-top)) var(--pad-seccion, 1.5rem) 1rem;
+  /* Con fondo propio: Safari 26 tiñe su barra de arriba con el background-color
+     del fixed que toca el borde. Transparente, reusaba el primer muestreo de
+     píxeles mientras la cabecera siguiera siendo la misma. */
+  background: var(--fondo);
   pointer-events: none;
   transition:
     opacity 300ms var(--ease-out),
@@ -1012,6 +999,7 @@ html[data-cine="quieto"] .controles-cine {
 /* Sobre una tarjeta invertida la cabecera usaba los colores de la página y
    quedaba en blanco sobre blanco: toma los de la escena, como los subtítulos. */
 :root[data-episodios="escenario"] .cabecera-serie[data-tono="invertido"] {
+  background: var(--tinta);
   --c-tinta: var(--fondo);
   --c-suave: var(--tinta-suave-inv);
   --c-borde: color-mix(in srgb, var(--fondo) 35%, var(--tinta));
@@ -1232,25 +1220,6 @@ html[data-cine="quieto"] .controles-cine {
   font-size: clamp(1.6rem, min(5vw, 6.5svh), 3.75rem);
   letter-spacing: -0.03em;
   line-height: 1.15;
-}
-
-/* Páginas de lectura (investigación, libros): la misma cabecera, con fondo
-   porque el texto pasa por debajo, y el mismo grano quieto de las escenas. */
-.cabecera-serie[data-con-fondo] {
-  padding-bottom: 1rem;
-  background: var(--fondo);
-}
-
-body[data-lectura]::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  /* Por encima de la cabecera (55): debajo, su fondo liso se veía como una franja más clara. */
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.09;
-  background-image: var(--grano);
-  background-size: 180px;
 }
 
 

@@ -8,8 +8,6 @@ interface Props {
   tono: Escena["tono"];
   rutas: RutasSerie;
   textos: TextosSerie;
-  /** En las páginas de lectura el texto pasa por debajo: la cabecera lleva fondo. */
-  conFondo?: boolean;
 }
 
 export interface RutasSerie {
@@ -30,11 +28,11 @@ export interface RutasSerie {
  * el contacto. Siempre a la vista; solo el modo cine la apaga. Esconderla según
  * la dirección del scroll se sentía al azar con el scroll suavizado.
  */
-export function CabeceraSerie({ rotulo, tono, rutas, textos, conFondo = false }: Props) {
+export function CabeceraSerie({ rotulo, tono, rutas, textos }: Props) {
   const { corto, etiqueta } = textos.otroIdioma;
   const codigo = corto.toLowerCase();
   return (
-    <header className="cabecera-serie" data-tono={tono} data-con-fondo={conFondo || undefined}>
+    <header className="cabecera-serie" data-tono={tono}>
       {/* En la apertura el nombre ya está en grande y todavía no empezó ningún
           episodio. Los huecos mantienen la fila en su lugar. */}
       {rotulo ? (
