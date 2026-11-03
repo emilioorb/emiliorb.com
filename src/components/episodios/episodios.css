@@ -932,6 +932,8 @@ html[data-cine="quieto"] .controles-cine {
   gap: 1.25rem;
 }
 
+/* Volver se lee como el idioma: secundario frente al contacto. */
+.cabecera-serie__volver,
 .cabecera-serie__idioma {
   color: var(--c-suave);
   font-size: 0.75rem;
@@ -942,6 +944,7 @@ html[data-cine="quieto"] .controles-cine {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .cabecera-serie__volver:hover,
   .cabecera-serie__idioma:hover {
     color: var(--c-tinta);
   }

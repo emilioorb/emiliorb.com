@@ -8,4 +8,6 @@ export const rutasSerie = (idioma: Idioma) => ({
   inicio: rutaDe(idioma),
   contacto: rutaDe(idioma, "#proximo"),
   proyectos: rutaDe(idioma, "#ep5-proyectos"),
+  lectura: rutaDe(idioma, "#ep6-lectura"),
+  libros: rutaDe(idioma, "#ep7-libros"),
 });

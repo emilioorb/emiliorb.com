@@ -57,6 +57,8 @@ export interface TextosSerie {
   readonly otroIdioma: { readonly corto: string; readonly etiqueta: string };
   readonly salir: string;
   readonly nuevaPestana: string;
+  /** De una página suelta a la escena de la serie que la cuenta: corto a la vista, completo para el lector de pantalla. */
+  readonly volver: { readonly corto: string; readonly etiqueta: string };
 }
 
 interface Textos {
@@ -219,6 +221,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       otroIdioma: { corto: "EN", etiqueta: "English version" },
       salir: "Salir",
       nuevaPestana: "(abre en otra pestaña)",
+      volver: { corto: "Volver", etiqueta: "Volver a la serie" },
     },
     ubicacion: "San José, Costa Rica",
   },
@@ -323,6 +326,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       otroIdioma: { corto: "ES", etiqueta: "Versión en español" },
       salir: "Exit",
       nuevaPestana: "(opens in a new tab)",
+      volver: { corto: "Back", etiqueta: "Back to the series" },
     },
     ubicacion: "San José, Costa Rica",
   },

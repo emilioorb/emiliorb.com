@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import ListaPapers from "./ListaPapers.astro";
 import { TEXTOS, RUTAS_INVESTIGACION, type Idioma } from "../i18n/ui";
 import { INVESTIGACION } from "../data/contenido";
+import { rutasSerie } from "../lib/episodios/rutas";
 
 interface Props {
   idioma: Idioma;
@@ -12,7 +13,7 @@ const { idioma } = Astro.props;
 const ti = TEXTOS[idioma].investigacion;
 ---
 
-<Base idioma={idioma} rutas={RUTAS_INVESTIGACION} meta={ti.meta} cabecera={ti.titulo}>
+<Base idioma={idioma} rutas={RUTAS_INVESTIGACION} meta={ti.meta} cabecera={ti.titulo} volver={rutasSerie(idioma).lectura}>
   <section class="mx-auto max-w-4xl px-6 pt-32 pb-[var(--aire-seccion-bottom)] sm:pt-40">
     <h1 class="text-[clamp(2rem,6vw,4rem)] leading-[1.1] font-medium tracking-[-0.03em]">
       {ti.titulo}

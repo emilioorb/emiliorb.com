@@ -29,6 +29,7 @@ const serie = rutasSerie(idioma);
     rotulo={tl.titulo}
     tono="claro"
     rutas={{ inicio: serie.inicio, contacto: serie.contacto, otroIdioma: RUTAS_LIBROS[otro] }}
+    volver={serie.libros}
     textos={t.serie}
   />
   <GaleriaLibros idioma={idioma} />

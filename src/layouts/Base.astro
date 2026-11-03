@@ -19,9 +19,11 @@ interface Props {
   cabecera: string | false;
   /** Una escena que ocupa la pantalla justa (la librería) no lleva pie: abriría scroll. */
   pie?: boolean;
+  /** La escena de la serie a la que vuelve la cabecera de una página de lectura. */
+  volver?: string;
 }
 
-const { idioma, cabecera, pie = true } = Astro.props;
+const { idioma, cabecera, pie = true, volver } = Astro.props;
 const t = TEXTOS[idioma];
 const rutas = Astro.props.rutas ?? { es: rutaDe("es"), en: rutaDe("en") };
 const meta = Astro.props.meta ?? t.meta;
@@ -126,6 +128,7 @@ const personaJsonLd = {
           rotulo={cabecera}
           tono="claro"
           conFondo
+          volver={volver}
           rutas={{ inicio: rutaDe(idioma), contacto: rutaDe(idioma, "#proximo"), otroIdioma: rutas[otro] }}
           textos={t.serie}
         />
