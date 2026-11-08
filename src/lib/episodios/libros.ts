@@ -47,6 +47,9 @@ const NARRADOR: Record<Idioma, Readonly<Record<string, string>>> = {
     "the-infinity-machine": "Si trabaja con IA, le muestra de dónde viene una parte de lo que usa hoy.",
     "ai-for-good": "Léalo cuando la conversación sobre IA se le vuelva abstracta.",
     "ai-engineering": "De todo lo que hay sobre IA aplicada, es el que yo tendría en el escritorio.",
+    "learning-domain-driven-design": "Léalo antes de partir un sistema grande en módulos, no después.",
+    "effective-typescript": "Si escribe TypeScript todos los días, este se paga en una semana.",
+    "web-application-security": "Para cuando su aplicación ya tiene usuarios y vale la pena atacarla.",
     "how-great-ideas-happen": "Lo dejo para el final: después de todos los demás, ayuda a elegir qué construir.",
   },
   en: {
@@ -60,6 +63,9 @@ const NARRADOR: Record<Idioma, Readonly<Record<string, string>>> = {
     "the-infinity-machine": "If you work with AI, it shows where part of what you use today came from.",
     "ai-for-good": "Read it when the conversation about AI starts to feel abstract.",
     "ai-engineering": "Of everything on applied AI, it's the one I'd keep on my desk.",
+    "learning-domain-driven-design": "Read it before you split a large system into modules, not after.",
+    "effective-typescript": "If you write TypeScript every day, this one pays for itself in a week.",
+    "web-application-security": "For when your app has users and is worth attacking.",
     "how-great-ideas-happen": "I leave it for last: after all the others, it helps you choose what to build.",
   },
 };

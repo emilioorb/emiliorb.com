@@ -7,6 +7,9 @@ import portadaPhilosophyDesign from "../assets/libros/a-philosophy-of-software-d
 import portadaDataIntensive from "../assets/libros/designing-data-intensive-applications.jpg";
 import portadaEngineeringGoogle from "../assets/libros/software-engineering-at-google.jpg";
 import portadaAiEngineering from "../assets/libros/ai-engineering.jpg";
+import portadaEffectiveTypescript from "../assets/libros/effective-typescript.jpg";
+import portadaLearningDdd from "../assets/libros/learning-domain-driven-design.jpg";
+import portadaWebSecurity from "../assets/libros/web-application-security.jpg";
 import portadaCrisisEngineering from "../assets/libros/crisis-engineering.jpg";
 import portadaInfinityMachine from "../assets/libros/the-infinity-machine.jpg";
 import portadaAiForGood from "../assets/libros/ai-for-good.jpg";
@@ -607,8 +610,8 @@ export interface Libro {
 }
 
 /**
- * En el orden en que los recomiendo leer, no por fecha. Los 5 primeros son los
- * que la portada muestra en una laptop, y los 6 primeros en el teléfono.
+ * En el orden en que los recomiendo leer, no por fecha. La portada muestra los 5
+ * primeros en una laptop, 6 en el teléfono y 10 en una pantalla grande.
  */
 export const LIBROS: readonly Libro[] = [
   {
@@ -667,6 +670,39 @@ export const LIBROS: readonly Libro[] = [
     },
   },
   {
+    slug: "learning-domain-driven-design",
+    titulo: "Learning Domain-Driven Design",
+    portada: portadaLearningDdd,
+    autor: "Vlad Khononov",
+    anio: "2021",
+    porQue: {
+      es: "Cómo dejar que el negocio dé forma al software: lenguaje común, contextos delimitados y agregados.",
+      en: "How to let the business shape the software: shared language, bounded contexts and aggregates.",
+    },
+  },
+  {
+    slug: "effective-typescript",
+    titulo: "Effective TypeScript",
+    portada: portadaEffectiveTypescript,
+    autor: "Dan Vanderkam",
+    anio: "2024",
+    porQue: {
+      es: "83 consejos concretos para que el sistema de tipos trabaje a su favor y no en su contra.",
+      en: "83 concrete items for making the type system work for you instead of against you.",
+    },
+  },
+  {
+    slug: "web-application-security",
+    titulo: "Web Application Security",
+    portada: portadaWebSecurity,
+    autor: "Andrew Hoffman",
+    anio: "2024",
+    porQue: {
+      es: "Cómo atacan una aplicación web y cómo defenderla, del reconocimiento a la mitigación.",
+      en: "How web applications get attacked and how to defend them, from reconnaissance to mitigation.",
+    },
+  },
+  {
     slug: "the-phoenix-project",
     titulo: "The Phoenix Project",
     portada: portadaPhoenixProject,
@@ -690,6 +726,7 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "crisis-engineering",
+    soloEnLibreria: true,
     titulo: "Crisis Engineering",
     portada: portadaCrisisEngineering,
     autor: "Marina Nitze, Matthew Weaver, Mikey Dickerson",
@@ -701,6 +738,7 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "the-infinity-machine",
+    soloEnLibreria: true,
     titulo: "The Infinity Machine",
     portada: portadaInfinityMachine,
     autor: "Sebastian Mallaby",
@@ -712,6 +750,7 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "ai-for-good",
+    soloEnLibreria: true,
     titulo: "AI for Good",
     portada: portadaAiForGood,
     autor: "Josh Tyrangiel",
