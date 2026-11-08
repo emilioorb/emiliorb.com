@@ -1093,10 +1093,16 @@ html[data-cine="quieto"] .controles-cine {
 }
 
 /* La lista cuelga del rótulo, centrada como él, con los colores de la escena. */
+/* La lista cuelga del centro del rótulo (--indice-x lo pone la cabecera al
+   abrir), no del centro de la ventana: con poco ancho la columna de la derecha
+   pesa más y el rótulo se corre. Nunca se sale por los costados. */
 .cabecera-serie__indice {
+  --ancho-indice: min(20rem, calc(100vw - 2 * var(--pad-seccion, 1.5rem)));
+  --borde-indice: calc(var(--pad-seccion, 1.5rem) + var(--ancho-indice) / 2);
   position: fixed;
-  inset: calc(var(--alto-cabecera) - 0.75rem + env(safe-area-inset-top)) auto auto 50%;
-  width: min(20rem, calc(100vw - 2 * var(--pad-seccion, 1.5rem)));
+  inset: calc(var(--alto-cabecera) - 0.75rem + env(safe-area-inset-top)) auto auto
+    clamp(var(--borde-indice), var(--indice-x, 50%), calc(100vw - var(--borde-indice)));
+  width: var(--ancho-indice);
   margin: 0;
   padding: 0.5rem;
   border: 1px solid var(--c-borde);

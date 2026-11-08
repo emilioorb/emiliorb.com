@@ -39,6 +39,7 @@ export function CabeceraSerie({ rotulo, tono, rutas, indice, actual, textos, con
   const { corto, etiqueta } = textos.otroIdioma;
   const codigo = corto.toLowerCase();
   const menu = useRef<HTMLDivElement>(null);
+  const boton = useRef<HTMLButtonElement>(null);
 
   // Un ancla de la misma página no cierra el popover; y si ya es la de la URL,
   // tampoco hay hashchange: se avisa a mano para que la serie aterrice igual.
@@ -72,7 +73,7 @@ export function CabeceraSerie({ rotulo, tono, rutas, indice, actual, textos, con
         <span aria-hidden="true" />
       )}
       {/* El rótulo del episodio es también el menú: no suma nada a la fila. */}
-      <button type="button" className="cabecera-serie__episodio" popoverTarget="indice-serie">
+      <button ref={boton} type="button" className="cabecera-serie__episodio" popoverTarget="indice-serie">
         <span className="cabecera-serie__rotulo">{rotulo ?? textos.indice.corto}</span>
         <span className="cabecera-serie__corto">{textos.indice.corto}</span>
         {/* SVG y no «▾»: Geist no trae el glifo y caía en un punto de otra fuente. */}
@@ -86,6 +87,13 @@ export function CabeceraSerie({ rotulo, tono, rutas, indice, actual, textos, con
         className="cabecera-serie__indice"
         popover="auto"
         onKeyDown={alTeclear}
+        // Antes de pintarse: se ubica bajo el centro del rótulo, donde esté hoy.
+        onBeforeToggle={(evento) => {
+          const rotuloEn = boton.current?.getBoundingClientRect();
+          if (evento.newState === "open" && rotuloEn) {
+            evento.currentTarget.style.setProperty("--indice-x", `${rotuloEn.left + rotuloEn.width / 2}px`);
+          }
+        }}
         onToggle={(evento) => {
           if (evento.newState === "open") evento.currentTarget.querySelector<HTMLAnchorElement>("[aria-current]")?.focus();
         }}
