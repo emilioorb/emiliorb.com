@@ -6,6 +6,7 @@ import ScrollSuave from "../components/ScrollSuave.astro";
 import Pie from "../components/Pie.astro";
 import { CabeceraSerie } from "../components/episodios/CabeceraSerie";
 import { TEXTOS, rutaDe, type Idioma } from "../i18n/ui";
+import { indiceSerie } from "../lib/episodios/guion";
 import { REDES, TRABAJO, enIdioma } from "../data/contenido";
 
 interface Props {
@@ -131,6 +132,7 @@ const personaJsonLd = {
           tono="claro"
           conFondo
           rutas={{ inicio: rutaDe(idioma), contacto: rutaDe(idioma, "#proximo"), otroIdioma: rutas[otro], volver }}
+          indice={indiceSerie(idioma)}
           textos={t.serie}
         />
       )

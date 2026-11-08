@@ -10,7 +10,7 @@ import { TextosEscena } from "../episodios/Escenas";
 import type { TextosSerie } from "../../i18n/ui";
 import { narradorDeGuion } from "../../lib/episodios/narrador";
 
-import type { Escena } from "../../lib/episodios/tipos";
+import type { EntradaIndice, Escena } from "../../lib/episodios/tipos";
 import "../episodios/episodios.css";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -18,6 +18,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 interface Props {
   escenas: readonly Escena[];
   rutas: RutasSerie;
+  indice: readonly EntradaIndice[];
   textos: TextosSerie;
 }
 
@@ -78,7 +79,12 @@ function rotuloHasta(escenas: readonly Escena[], indice: number): string | null 
   return rotulo;
 }
 
-export default function Episodios({ escenas, rutas, textos }: Props) {
+/** La tarjeta de título del episodio en curso, para marcarlo en el menú. */
+function episodioHasta(escenas: readonly Escena[], indice: number): string | undefined {
+  return escenas.slice(0, indice + 1).findLast((e) => e.tipo === "titulo")?.id;
+}
+
+export default function Episodios({ escenas, rutas, indice, textos }: Props) {
   const raiz = useRef<HTMLDivElement>(null);
   const [momento, setMomento] = useState<Momento>({ escena: 0, tiempo: 0 });
   const [enEscena, setEnEscena] = useState(true);
@@ -260,6 +266,8 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
           const direccion = TECLAS_PASO[evento.key];
           if (!direccion || evento.altKey || evento.ctrlKey || evento.metaKey) return;
           if (evento.target instanceof HTMLInputElement || evento.target instanceof HTMLTextAreaElement) return;
+          // Con el menú abierto, las flechas son del menú.
+          if (document.querySelector(".cabecera-serie__indice:popover-open")) return;
           evento.preventDefault();
           // Dejarla apretada no encadena saltos: un paso por pulsación.
           if (evento.repeat) return;
@@ -360,6 +368,8 @@ export default function Episodios({ escenas, rutas, textos }: Props) {
     <TextosEscena.Provider value={textos}>
       <CabeceraSerie
         rotulo={rotuloHasta(escenas, momento.escena)}
+        indice={indice}
+        actual={episodioHasta(escenas, momento.escena)}
         tono={escena?.tono ?? "claro"}
         rutas={rutas}
         textos={textos}

@@ -13,6 +13,15 @@ export interface Linea {
   readonly texto: string;
 }
 
+/** Un episodio en el menú de la cabecera. */
+export interface EntradaIndice {
+  /** El id de su tarjeta de título: marca el episodio en curso. */
+  readonly id: string;
+  readonly numero: string;
+  readonly titulo: string;
+  readonly href: string;
+}
+
 interface Comun {
   readonly id: string;
   /** Recorrido de scroll de la escena, en `svh`. Por encima de 100 es tiempo fijada. */

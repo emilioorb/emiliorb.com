@@ -1,5 +1,6 @@
 import type { TextosSerie } from "../../i18n/ui";
-import type { Escena } from "../../lib/episodios/tipos";
+import { useRef } from "react";
+import type { EntradaIndice, Escena } from "../../lib/episodios/tipos";
 
 interface Props {
   /** «Episodio 2 · Sin señal», el nombre de una página, o `null` en la apertura. */
@@ -7,6 +8,10 @@ interface Props {
   /** El tono de la escena activa: sobre una tarjeta invertida, la cabecera se invierte con ella. */
   tono: Escena["tono"];
   rutas: RutasSerie;
+  /** Los episodios del menú que abre el rótulo. */
+  indice: readonly EntradaIndice[];
+  /** El id de la tarjeta del episodio en curso, si la escena está dentro de uno. */
+  actual?: string;
   textos: TextosSerie;
   /** En las páginas de lectura el texto pasa por debajo: la cabecera lleva fondo. */
   conFondo?: boolean;
@@ -30,9 +35,31 @@ export interface RutasSerie {
  * el contacto. Siempre a la vista; solo el modo cine la apaga. Esconderla según
  * la dirección del scroll se sentía al azar con el scroll suavizado.
  */
-export function CabeceraSerie({ rotulo, tono, rutas, textos, conFondo = false }: Props) {
+export function CabeceraSerie({ rotulo, tono, rutas, indice, actual, textos, conFondo = false }: Props) {
   const { corto, etiqueta } = textos.otroIdioma;
   const codigo = corto.toLowerCase();
+  const menu = useRef<HTMLDivElement>(null);
+
+  // Un ancla de la misma página no cierra el popover; y si ya es la de la URL,
+  // tampoco hay hashchange: se avisa a mano para que la serie aterrice igual.
+  const alElegir = (evento: React.MouseEvent<HTMLAnchorElement>) => {
+    menu.current?.hidePopover();
+    const destino = new URL(evento.currentTarget.href);
+    if (destino.pathname === location.pathname && destino.hash === location.hash) {
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    }
+  };
+
+  // Las flechas recorren la lista, como en un menú del sistema.
+  const alTeclear = (evento: React.KeyboardEvent<HTMLDivElement>) => {
+    const paso = evento.key === "ArrowDown" ? 1 : evento.key === "ArrowUp" ? -1 : 0;
+    if (!paso) return;
+    evento.preventDefault();
+    const enlaces = Array.from(evento.currentTarget.querySelectorAll<HTMLAnchorElement>("a"));
+    const i = enlaces.indexOf(document.activeElement as HTMLAnchorElement);
+    enlaces.at((i + paso) % enlaces.length)?.focus();
+  };
+
   return (
     <header className="cabecera-serie" data-tono={tono} data-con-fondo={conFondo || undefined}>
       {/* En la apertura el nombre ya está en grande y todavía no empezó ningún
@@ -44,7 +71,42 @@ export function CabeceraSerie({ rotulo, tono, rutas, textos, conFondo = false }:
       ) : (
         <span aria-hidden="true" />
       )}
-      <p className="cabecera-serie__episodio">{rotulo}</p>
+      {/* El rótulo del episodio es también el menú: no suma nada a la fila. */}
+      <button type="button" className="cabecera-serie__episodio" popoverTarget="indice-serie">
+        <span className="cabecera-serie__rotulo">{rotulo ?? textos.indice.corto}</span>
+        <span className="cabecera-serie__corto">{textos.indice.corto}</span>
+        {/* SVG y no «▾»: Geist no trae el glifo y caía en un punto de otra fuente. */}
+        <svg className="cabecera-serie__flecha" viewBox="0 0 10 6" aria-hidden="true">
+          <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <div
+        ref={menu}
+        id="indice-serie"
+        className="cabecera-serie__indice"
+        popover="auto"
+        onKeyDown={alTeclear}
+        onToggle={(evento) => {
+          if (evento.newState === "open") evento.currentTarget.querySelector<HTMLAnchorElement>("[aria-current]")?.focus();
+        }}
+      >
+        <nav aria-label={textos.indice.etiqueta}>
+          <ol>
+            {indice.map((entrada) => (
+              <li key={entrada.id}>
+                <a
+                  href={entrada.href}
+                  aria-current={entrada.id === actual ? "step" : undefined}
+                  onClick={alElegir}
+                >
+                  <span className="cabecera-serie__numero">{entrada.numero}</span>
+                  {entrada.titulo}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </div>
       <div className="cabecera-serie__derecha">
         {rutas.volver && (
           <a className="cabecera-serie__volver" href={rutas.volver} aria-label={textos.volver.etiqueta}>

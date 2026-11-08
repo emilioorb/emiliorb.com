@@ -58,6 +58,8 @@ export interface TextosSerie {
   readonly nuevaPestana: string;
   /** De una página suelta a la escena de la serie que la cuenta: corto a la vista, completo para el lector de pantalla. */
   readonly volver: { readonly corto: string; readonly etiqueta: string };
+  /** El menú del rótulo central: el botón cuando no hay episodio en curso (y en el teléfono) y el nombre de la lista. */
+  readonly indice: { readonly corto: string; readonly etiqueta: string };
 }
 
 interface Textos {
@@ -204,6 +206,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       salir: "Salir",
       nuevaPestana: "(abre en otra pestaña)",
       volver: { corto: "Volver", etiqueta: "Volver a la serie" },
+      indice: { corto: "Episodios", etiqueta: "Episodios de la serie" },
     },
     ubicacion: "San José, Costa Rica",
   },
@@ -295,6 +298,7 @@ export const TEXTOS: Record<Idioma, Textos> = {
       salir: "Exit",
       nuevaPestana: "(opens in a new tab)",
       volver: { corto: "Back", etiqueta: "Back to the series" },
+      indice: { corto: "Episodes", etiqueta: "Episodes of the series" },
     },
     ubicacion: "San José, Costa Rica",
   },

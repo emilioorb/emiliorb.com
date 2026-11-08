@@ -6,6 +6,7 @@ import Episodios from "./islas/Episodios";
 import { TEXTOS, type Idioma } from "../i18n/ui";
 import type { Escena } from "../lib/episodios/tipos";
 import type { RutasSerie } from "./episodios/CabeceraSerie";
+import { indiceSerie } from "../lib/episodios/guion";
 
 interface Props {
   idioma: Idioma;
@@ -37,5 +38,5 @@ const rutasSerie: RutasSerie = { inicio, contacto, otroIdioma: rutas[otro], volv
       document.documentElement.dataset.episodios = "escenario";
     }
   </script>
-  <Episodios client:load escenas={escenas} rutas={rutasSerie} textos={TEXTOS[idioma].serie} />
+  <Episodios client:load escenas={escenas} rutas={rutasSerie} indice={indiceSerie(idioma)} textos={TEXTOS[idioma].serie} />
 </Base>

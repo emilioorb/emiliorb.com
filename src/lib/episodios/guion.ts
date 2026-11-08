@@ -10,10 +10,10 @@ import {
   type Proyecto,
   type Puesto,
 } from "../../data/contenido";
-import { RUTAS_LIBROS, TEXTOS, rutasPaper, type Idioma } from "../../i18n/ui";
+import { RUTAS_LIBROS, TEXTOS, rutaDe, rutasPaper, type Idioma } from "../../i18n/ui";
 import { rutaFicha } from "./rutas";
 import { casillasDesdeFen, urlPerfil, type ResultadoAjedrez } from "../ajedrez";
-import type { Enlace, Escena, Imagen, ItemPasarela, Linea, PartidaEnEscena } from "./tipos";
+import type { Enlace, EntradaIndice, Escena, Imagen, ItemPasarela, Linea, PartidaEnEscena } from "./tipos";
 
 /** Los hechos salen de contenido.ts; si un puesto cambia de nombre, el build se corta aquí. */
 function puesto(empresa: string): Puesto {
@@ -250,6 +250,24 @@ const tarjeta = (idioma: Idioma, episodio: number, titulo: readonly string[]) =>
   cabecera: `${COPY[idioma].episodio} ${episodio} · ${titulo.join(" ").replace(/\.$/, "")}`,
   titulo,
 });
+
+/**
+ * El índice de la cabecera: cada episodio con su título y su ancla. Sale del
+ * mismo copy que las tarjetas, así que el menú no se desfasa de la serie.
+ */
+export function indiceSerie(idioma: Idioma): readonly EntradaIndice[] {
+  const c = COPY[idioma];
+  const titulos = [c.universidad.titulo, c.ep1.titulo, c.ep2.titulo, c.ep3.titulo, c.ep4.titulo, c.ep5.titulo, c.ep6.titulo];
+  return titulos.map((titulo, i) => {
+    const id = `ep${i + 1}-titulo`;
+    return {
+      id,
+      numero: String(i + 1).padStart(2, "0"),
+      titulo: titulo.join(" ").replace(/\.$/, ""),
+      href: rutaDe(idioma, `#${id}`),
+    };
+  });
+}
 
 const MI_SITIO = "https://emiliorb.com";
 
