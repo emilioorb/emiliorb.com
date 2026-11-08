@@ -390,7 +390,7 @@ export function construirGuion({ idioma, portadas, ajedrez, usuarioChess }: Entr
     })),
   ];
 
-  const libros = LIBROS.map((libro) => {
+  const libros = LIBROS.filter((libro) => !libro.soloEnLibreria).map((libro) => {
     const portada = portadas.get(libro.slug);
     if (!portada) throw new Error(`Falta la portada de «${libro.titulo}».`);
     return { slug: libro.slug, titulo: libro.titulo, autor: libro.autor, anio: libro.anio, portada };

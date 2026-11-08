@@ -2,6 +2,12 @@ import type { ImageMetadata } from "astro";
 import type { Idioma } from "../i18n/ui";
 import portadaTheGoal from "../assets/libros/the-goal.jpg";
 import portadaPhoenixProject from "../assets/libros/the-phoenix-project.jpg";
+import portadaFundamentalsArchitecture from "../assets/libros/fundamentals-of-software-architecture.jpg";
+import portadaPhilosophyDesign from "../assets/libros/a-philosophy-of-software-design.jpg";
+import portadaDataIntensive from "../assets/libros/designing-data-intensive-applications.jpg";
+import portadaEngineeringGoogle from "../assets/libros/software-engineering-at-google.jpg";
+import portadaAiEngineering from "../assets/libros/ai-engineering.jpg";
+import portadaBuildLlm from "../assets/libros/build-a-large-language-model.jpg";
 import portadaCrisisEngineering from "../assets/libros/crisis-engineering.jpg";
 import portadaInfinityMachine from "../assets/libros/the-infinity-machine.jpg";
 import portadaAiForGood from "../assets/libros/ai-for-good.jpg";
@@ -597,9 +603,14 @@ export interface Libro {
   readonly autor: string;
   readonly anio: string;
   readonly porQue: Bilingue;
+  /** La estantería de la portada muestra 10 como mucho; el resto vive solo en /libros. */
+  readonly soloEnLibreria?: true;
 }
 
-/** En el orden en que los recomiendo leer, no por fecha. */
+/**
+ * En el orden en que los recomiendo leer, no por fecha. Los 5 primeros son los
+ * que la portada muestra en una laptop, y los 6 primeros en el teléfono.
+ */
 export const LIBROS: readonly Libro[] = [
   {
     slug: "the-goal",
@@ -613,6 +624,50 @@ export const LIBROS: readonly Libro[] = [
     },
   },
   {
+    slug: "a-philosophy-of-software-design",
+    titulo: "A Philosophy of Software Design",
+    portada: portadaPhilosophyDesign,
+    autor: "John Ousterhout",
+    anio: "2021",
+    porQue: {
+      es: "La complejidad se acumula de a poco. Enseña a frenarla con módulos profundos e interfaces simples.",
+      en: "Complexity builds up little by little. It shows how to hold it back with deep modules and simple interfaces.",
+    },
+  },
+  {
+    slug: "fundamentals-of-software-architecture",
+    titulo: "Fundamentals of Software Architecture",
+    portada: portadaFundamentalsArchitecture,
+    autor: "Mark Richards, Neal Ford",
+    anio: "2025",
+    porQue: {
+      es: "En arquitectura todo es un trade-off. Enseña a nombrar las características que importan, medirlas y elegir el estilo que las sirve.",
+      en: "In architecture everything is a trade-off. It teaches you to name the characteristics that matter, measure them and pick the style that serves them.",
+    },
+  },
+  {
+    slug: "designing-data-intensive-applications",
+    titulo: "Designing Data-Intensive Applications",
+    portada: portadaDataIntensive,
+    autor: "Martin Kleppmann, Chris Riccomini",
+    anio: "2026",
+    porQue: {
+      es: "Cómo funcionan por dentro las bases de datos, la replicación y los flujos de eventos, y qué se gana y se pierde con cada decisión.",
+      en: "How databases, replication and event streams work inside, and what each decision gains and costs.",
+    },
+  },
+  {
+    slug: "ai-engineering",
+    titulo: "AI Engineering",
+    portada: portadaAiEngineering,
+    autor: "Chip Huyen",
+    anio: "2025",
+    porQue: {
+      es: "Cómo construir productos sobre modelos fundacionales: evaluación, RAG, agentes, fine-tuning y costos.",
+      en: "How to build products on foundation models: evaluation, RAG, agents, fine-tuning and cost.",
+    },
+  },
+  {
     slug: "the-phoenix-project",
     titulo: "The Phoenix Project",
     portada: portadaPhoenixProject,
@@ -621,6 +676,17 @@ export const LIBROS: readonly Libro[] = [
     porQue: {
       es: "Las mismas ideas de The Goal llevadas al software y a la operación de TI.",
       en: "The ideas of The Goal carried over to software and IT operations.",
+    },
+  },
+  {
+    slug: "software-engineering-at-google",
+    titulo: "Software Engineering at Google",
+    portada: portadaEngineeringGoogle,
+    autor: "Titus Winters, Tom Manshreck, Hyrum Wright",
+    anio: "2020",
+    porQue: {
+      es: "La ingeniería como programación sostenida en el tiempo: pruebas, revisión de código, dependencias y equipos que escalan.",
+      en: "Engineering as programming over time: testing, code review, dependencies and teams that scale.",
     },
   },
   {
@@ -646,7 +712,19 @@ export const LIBROS: readonly Libro[] = [
     },
   },
   {
+    slug: "build-a-large-language-model",
+    titulo: "Build a Large Language Model (From Scratch)",
+    portada: portadaBuildLlm,
+    autor: "Sebastian Raschka",
+    anio: "2024",
+    porQue: {
+      es: "Arma un modelo tipo GPT desde cero en PyTorch, del tokenizador al ajuste fino.",
+      en: "Builds a GPT-style model from scratch in PyTorch, from tokenizer to fine-tuning.",
+    },
+  },
+  {
     slug: "ai-for-good",
+    soloEnLibreria: true,
     titulo: "AI for Good",
     portada: portadaAiForGood,
     autor: "Josh Tyrangiel",
@@ -658,6 +736,7 @@ export const LIBROS: readonly Libro[] = [
   },
   {
     slug: "how-great-ideas-happen",
+    soloEnLibreria: true,
     titulo: "How Great Ideas Happen",
     portada: portadaGreatIdeas,
     autor: "George Newman",

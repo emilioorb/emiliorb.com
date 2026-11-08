@@ -514,19 +514,33 @@
 
 .estante__libros {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, calc(var(--alto-portada) / 1.5)));
+  grid-template-columns: repeat(5, minmax(0, calc(var(--alto-portada) / 1.5)));
+  /* Como en un estante: cada libro con su tamaño, todos apoyados abajo. */
+  align-items: end;
   gap: clamp(0.75rem, 1.8vw, 1.75rem);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* En una laptop cabe una fila: los 5 principales. En una pantalla grande y
+   alta caben dos, y salen los 10. */
+.estante__libros > :nth-child(n + 6) {
+  display: none;
+}
+
+@media (min-width: 1536px) and (min-height: 1000px) {
+  .estante__libros > :nth-child(n + 6) {
+    display: block;
+  }
+}
+
+/* Sin forzar 2:3: las portadas van de 0,66 a 0,81 y el recorte se comía
+   títulos que ocupan todo el ancho. */
 .libro img {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
   border-radius: 3px;
   box-shadow:
     0 1px 2px rgb(0 0 0 / 0.12),
@@ -551,8 +565,12 @@
   .estante {
     --alto-portada: 18svh;
   }
+  /* En el teléfono, dos filas de 3. */
   .estante__libros {
     grid-template-columns: repeat(3, minmax(0, calc(var(--alto-portada) / 1.5)));
+  }
+  .estante__libros > :nth-child(6) {
+    display: block;
   }
 }
 
