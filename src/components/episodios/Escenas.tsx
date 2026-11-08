@@ -14,6 +14,7 @@ import type {
   EscenaTitulo,
 } from "../../lib/episodios/tipos";
 import { createContext, memo, useContext } from "react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { TextosSerie } from "../../i18n/ui";
 import { BASE_PIEZA, FORMA_PIEZA } from "./piezas";
 
@@ -133,13 +134,13 @@ function Vinculo({ enlace }: { enlace: Enlace }) {
   return enlace.externo ? (
     <a className="vinculo" href={enlace.href} target="_blank" rel="noopener noreferrer">
       <span className="vinculo__texto">{enlace.texto}</span>
-      <span aria-hidden="true">↗</span>
+      <ArrowUpRight className="icono" aria-hidden="true" />
       <span className="sr-only"> {nuevaPestana}</span>
     </a>
   ) : (
     <a className="vinculo" href={enlace.href}>
       <span className="vinculo__texto">{enlace.texto}</span>
-      <span aria-hidden="true">→</span>
+      <ArrowRight className="icono" aria-hidden="true" />
     </a>
   );
 }
@@ -326,7 +327,8 @@ function Salida({ escena }: { escena: EscenaSalida }) {
       <h2 className="salida__siguiente golpe">
         <a href={escena.siguiente.href}>
           <span className="vinculo__texto">{escena.siguiente.nombre}</span>
-          <span aria-hidden="true"> →</span>
+          {" "}
+          <ArrowRight className="icono" aria-hidden="true" />
         </a>
       </h2>
       <p className="item__enlaces">

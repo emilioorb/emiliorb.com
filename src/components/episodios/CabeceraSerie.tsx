@@ -1,5 +1,6 @@
 import type { TextosSerie } from "../../i18n/ui";
 import { useRef } from "react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import type { EntradaIndice, Escena } from "../../lib/episodios/tipos";
 
 interface Props {
@@ -76,10 +77,7 @@ export function CabeceraSerie({ rotulo, tono, rutas, indice, actual, textos, con
       <button ref={boton} type="button" className="cabecera-serie__episodio" popoverTarget="indice-serie">
         <span className="cabecera-serie__rotulo">{rotulo ?? textos.indice.corto}</span>
         <span className="cabecera-serie__corto">{textos.indice.corto}</span>
-        {/* SVG y no «▾»: Geist no trae el glifo y caía en un punto de otra fuente. */}
-        <svg className="cabecera-serie__flecha" viewBox="0 0 10 6" aria-hidden="true">
-          <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <ChevronDown className="cabecera-serie__flecha" aria-hidden="true" />
       </button>
       <div
         ref={menu}
@@ -118,7 +116,7 @@ export function CabeceraSerie({ rotulo, tono, rutas, indice, actual, textos, con
       <div className="cabecera-serie__derecha">
         {rutas.volver && (
           <a className="cabecera-serie__volver" href={rutas.volver} aria-label={textos.volver.etiqueta}>
-            <span aria-hidden="true">← </span>
+            <ArrowLeft className="icono" aria-hidden="true" />
             {textos.volver.corto}
           </a>
         )}

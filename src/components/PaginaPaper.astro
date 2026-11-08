@@ -1,4 +1,5 @@
 ---
+import { ArrowLeft } from "lucide-react";
 import Base from "../layouts/Base.astro";
 import { TEXTOS, RUTAS_INVESTIGACION, rutasPaper, type Idioma } from "../i18n/ui";
 import { enIdioma, type Paper } from "../data/contenido";
@@ -25,7 +26,7 @@ const parrafo = "mt-3 text-sm leading-relaxed text-tinta-suave";
       href={RUTAS_INVESTIGACION[idioma]}
       class="text-sm text-tinta-suave underline decoration-borde underline-offset-4 transition-colors duration-200 hover:text-tinta hover:decoration-tinta"
     >
-      ← {ti.volver}
+      <ArrowLeft className="icono" aria-hidden="true" /> {ti.volver}
     </a>
 
     <p class={`mt-10 ${etiqueta}`}>{ti.estados[paper.estado]}</p>

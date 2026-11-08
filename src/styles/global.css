@@ -100,3 +100,12 @@
     transition: none;
   }
 }
+
+/* Íconos de Lucide junto al texto: miden lo que la letra. */
+.icono {
+  display: inline-block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}

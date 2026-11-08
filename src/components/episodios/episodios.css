@@ -395,6 +395,7 @@
 /* Alto táctil de 44px sin agrandar la letra. */
 .vinculo {
   display: inline-flex;
+  align-items: center;
   white-space: nowrap;
   gap: 0.3em;
   min-height: 44px;
@@ -1073,8 +1074,8 @@ html[data-cine="quieto"] .controles-cine {
 
 .cabecera-serie__flecha {
   flex: none;
-  width: 0.625rem;
-  height: 0.375rem;
+  width: 1.1em;
+  height: 1.1em;
   transition: transform var(--dur-pop) var(--ease-out);
 }
 
@@ -1213,6 +1214,12 @@ html[data-cine="quieto"] .controles-cine {
   gap: 1.25rem;
 }
 
+.cabecera-serie__volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
 /* Volver se lee como el idioma: secundario frente al contacto. */
 .cabecera-serie__volver,
 .cabecera-serie__idioma {
@@ -1269,7 +1276,9 @@ html[data-cine="quieto"] .controles-cine {
 /* En el teléfono el rótulo entero no cabe: el episodio ya lo dice su tarjeta
    de título y lo repite el narrador, así que el botón dice solo «Episodios». */
 @media (max-width: 480px) {
-  .cabecera-serie__rotulo {
+  /* No cabe junto al menú, que ya lleva a la serie. */
+  .cabecera-serie__rotulo,
+  .cabecera-serie__volver {
     display: none;
   }
   .cabecera-serie__corto {
