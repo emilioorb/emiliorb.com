@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import "../components/episodios/episodios.css";
+import { Font } from "astro:assets";
 import ScrollSuave from "../components/ScrollSuave.astro";
 import Pie from "../components/Pie.astro";
 import { CabeceraSerie } from "../components/episodios/CabeceraSerie";
@@ -71,6 +72,7 @@ const personaJsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <Font cssVariable="--font-geist" preload />
     <title>{meta.titulo}</title>
     <meta name="description" content={meta.descripcion} />
     <link rel="canonical" href={canonica} />

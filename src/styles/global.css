@@ -1,7 +1,9 @@
 @import "tailwindcss";
-/* Servida desde el proyecto, no desde Google: sin petición a terceros y sin
-   salto de tipografía al cargar. */
-@import "@fontsource-variable/geist";
+/* Geist la declara la API de fuentes de Astro (astro.config.mjs) y la inyecta
+   <Font> en Base.astro, con precarga y respaldo de métricas ajustadas. */
+@theme inline {
+  --font-sans: var(--font-geist);
+}
 
 @theme {
   --color-fondo: var(--fondo);
@@ -9,13 +11,14 @@
   --color-tinta-suave: var(--tinta-suave);
   --color-borde: var(--borde);
 
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-
   /* Una sola curva de salida para toda la página. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 :root {
+  /* El «ch» de Geist en em. Un tope en «ch» depende de la fuente que pinta:
+     con el respaldo medía 17% menos y el texto se reacomodaba al llegar Geist. */
+  --ch: 0.683em;
   color-scheme: light;
   /* Chromium no repinta la barra de la ventana cuando cambia `color-scheme` en
      vivo: con colores propios sí, porque cambian las variables. */

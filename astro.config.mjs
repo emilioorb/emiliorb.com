@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -60,6 +60,30 @@ export default defineConfig({
     "/sobre-mi": "/#ep6-titulo",
     "/en/about": "/en/#ep6-titulo",
   },
+
+  // Geist servida desde el paquete, con precarga en el <head> y un respaldo con
+  // las métricas ajustadas a ella. Con `swap` el título grande se pintaba en la
+  // fuente del sistema y se ensanchaba al llegar Geist; con `optional`, si no
+  // llega antes del primer pintado, esa visita se queda con el respaldo y la
+  // siguiente ya la tiene en caché: nunca hay cambio a la vista.
+  fonts: [
+    {
+      provider: fontProviders.local(),
+      name: "Geist",
+      cssVariable: "--font-geist",
+      fallbacks: ["sans-serif"],
+      display: "optional",
+      options: {
+        variants: [
+          {
+            src: ["@fontsource-variable/geist/files/geist-latin-wght-normal.woff2"],
+            weight: "100 900",
+            style: "normal",
+          },
+        ],
+      },
+    },
+  ],
 
   integrations: [
     react(),

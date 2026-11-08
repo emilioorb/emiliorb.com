@@ -190,7 +190,7 @@
 
 .apertura__rol {
   margin: clamp(1rem, 3svh, 1.75rem) 0 0;
-  max-width: 40ch;
+  max-width: calc(40 * var(--ch));
   font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
   line-height: 1.4;
   color: var(--suave);
@@ -302,7 +302,7 @@
 
 .etapa__contexto {
   margin: 0;
-  max-width: 52ch;
+  max-width: calc(52 * var(--ch));
   font-size: clamp(0.95rem, 0.85rem + 0.35vw, 1.125rem);
   line-height: 1.5;
   color: var(--suave);
@@ -342,7 +342,7 @@
 }
 
 .paso[data-remate] .paso__texto {
-  max-width: 24ch;
+  max-width: calc(24 * var(--ch));
   font-weight: 600;
 }
 
@@ -477,7 +477,7 @@
 }
 
 .item[data-largo] .item__titulo {
-  max-width: 30ch;
+  max-width: calc(30 * var(--ch));
   font-size: min(6.4vw, 6.2svh, 3.5rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
@@ -485,7 +485,7 @@
 
 .item__linea {
   margin: 0;
-  max-width: 46ch;
+  max-width: calc(46 * var(--ch));
   font-size: clamp(1rem, 0.9rem + 0.45vw, 1.3rem);
   line-height: 1.5;
   color: var(--suave);
@@ -535,7 +535,7 @@
 
 .estante__destacado {
   display: grid;
-  max-width: 52ch;
+  max-width: calc(52 * var(--ch));
   gap: 0.4rem;
 }
 
@@ -753,7 +753,7 @@
 
 .ajedrez-escena__texto {
   display: grid;
-  max-width: 40ch;
+  max-width: calc(40 * var(--ch));
   gap: 0.75rem;
 }
 
@@ -1093,7 +1093,7 @@ html[data-cine="quieto"] .controles-cine {
 }
 
 .titulo[data-largo] .titulo__texto {
-  max-width: 14ch;
+  max-width: calc(14 * var(--ch));
   font-size: min(11vw, 13svh, 8rem);
   line-height: 0.95;
   letter-spacing: -0.045em;
@@ -1107,7 +1107,7 @@ html[data-cine="quieto"] .controles-cine {
 
 .sintesis__texto {
   margin: 0;
-  max-width: 24ch;
+  max-width: calc(24 * var(--ch));
   font-size: clamp(1.5rem, min(5.6vw, 6.4svh), 3.75rem);
   font-weight: 500;
   line-height: 1.12;
@@ -1116,7 +1116,7 @@ html[data-cine="quieto"] .controles-cine {
 }
 
 .sintesis[data-largo] .sintesis__texto {
-  max-width: 34ch;
+  max-width: calc(34 * var(--ch));
   font-size: clamp(1.2rem, min(3.6vw, 4.2svh), 2.5rem);
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -1143,7 +1143,7 @@ html[data-cine="quieto"] .controles-cine {
 
 .resultado__texto {
   display: block;
-  max-width: 30ch;
+  max-width: calc(30 * var(--ch));
   font-size: clamp(1.35rem, min(4.4vw, 5.2svh), 3rem);
   font-weight: 500;
   line-height: 1.12;
@@ -1189,7 +1189,7 @@ html[data-cine="quieto"] .controles-cine {
 
 .salida__siguiente {
   margin: 0.4rem 0 clamp(1rem, 4svh, 2.25rem);
-  max-width: 16ch;
+  max-width: calc(16 * var(--ch));
   font-size: min(9vw, 11svh, 6.5rem);
   font-weight: 600;
   line-height: 1;
