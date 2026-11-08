@@ -364,8 +364,8 @@ export const PROYECTOS_PERSONALES: readonly Proyecto[] = conResumenCorto([
     // Producto completo y al aire según Emilio (2026-11-01). El contenido sale del
     // repositorio gaceta-ai (README, STACK, ARCHITECTURE y alcance). Solo se
     // afirman garantías de diseño: las métricas medidas viven en el paper.
-    slug: "gaceta-ai",
-    nombre: "Gaceta AI",
+    slug: "rige",
+    nombre: "Rige",
     href: null,
     repo: null,
     anio: "2026",
@@ -501,14 +501,14 @@ export interface Paper {
  */
 export const INVESTIGACION: readonly Paper[] = [
   {
-    slug: "gaceta-ai",
+    slug: "rige",
     titulo: "Reliability by engineering: a RAG over Costa Rica's official gazette",
     resumen: {
       es: "Cuánta confiabilidad de un RAG jurídico sale de decisiones de ingeniería verificables y no de una recuperación más sofisticada.",
       en: "How much of a legal RAG's reliability comes from verifiable engineering decisions rather than more sophisticated retrieval.",
     },
     tituloProvisional: true,
-    proyecto: "Gaceta AI",
+    proyecto: "Rige",
     estado: "preparacion",
     tesis: {
       es: "En un RAG sobre un diario oficial, la mayor parte de la confiabilidad sale de decisiones de ingeniería verificables y no de técnicas de recuperación más sofisticadas: segmentar por publicación, comprobar las citas por código y filtrar los datos personales antes de indexar. Se mide con una ablación sobre un conjunto de referencia nuevo, y los resultados pueden desmentirla.",

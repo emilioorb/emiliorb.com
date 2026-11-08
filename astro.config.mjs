@@ -59,6 +59,11 @@ export default defineConfig({
     "/nuevo/proyectos/[slug]": "/proyectos/[slug]",
     "/sobre-mi": "/#ep6-titulo",
     "/en/about": "/en/#ep6-titulo",
+    // Gaceta AI pasó a llamarse Rige.
+    "/proyectos/gaceta-ai": "/proyectos/rige",
+    "/en/projects/gaceta-ai": "/en/projects/rige",
+    "/investigacion/gaceta-ai": "/investigacion/rige",
+    "/en/research/gaceta-ai": "/en/research/rige",
   },
 
   // Geist servida desde el paquete, con precarga en el <head> y un respaldo con

@@ -42,7 +42,7 @@ export const ORDEN_PROYECTOS = [
   "transportes-acaya",
   "erp-arclo",
   "api-facturacion",
-  "gaceta-ai",
+  "rige",
   "t-ledger",
   "emiliorb",
 ] as const;
@@ -116,7 +116,7 @@ const COPY = {
           "Acaya operaba con su sistema anterior y hojas de cálculo. Hoy factura desde la plataforma más de 1500 viajes.",
         "erp-arclo": "El ERP junta lo que en Arclo vivía en tres herramientas que no se hablaban.",
         "api-facturacion": "La API de facturación resuelve una vez lo que cada proyecto rehacía con Hacienda.",
-        "gaceta-ai": "Gaceta AI responde preguntas sobre La Gaceta. Cada cita la comprueba el código.",
+        rige: "Rige responde preguntas sobre La Gaceta. Cada cita la comprueba el código.",
         "t-ledger":
           "T-Ledger lleva las finanzas de una persona, una pareja o una familia, en partida doble. Cada cifra se rastrea hasta su origen.",
         emiliorb: "Y este sitio, en dos idiomas y dos temas, con las animaciones hechas a mano.",
@@ -207,7 +207,7 @@ const COPY = {
           "Acaya ran on its old system and spreadsheets. Today it invoices over 1,500 trips from the platform.",
         "erp-arclo": "The ERP brings together what Arclo kept in three tools that didn't talk to each other.",
         "api-facturacion": "The invoicing API solves, once, what every project used to rebuild for Hacienda.",
-        "gaceta-ai": "Gaceta AI answers questions about the official gazette. The code checks every citation.",
+        rige: "Rige answers questions about the official gazette. The code checks every citation.",
         "t-ledger":
           "T-Ledger keeps the books for a person, a couple or a family, in double entry. Every figure traces back to its source.",
         emiliorb: "And this site, in two languages and two themes, with the animations built by hand.",

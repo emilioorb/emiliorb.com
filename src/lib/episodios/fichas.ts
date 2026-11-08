@@ -184,7 +184,7 @@ const GUIONES: Readonly<Record<string, Readonly<Record<Idioma, GuionFicha>>>> = 
       resultados: ["Its first user is Arclo's ERP, which no longer depends on an outside provider."],
     },
   },
-  "gaceta-ai": {
+  rige: {
     es: {
       resumen: "A La Gaceta se le pregunta en lenguaje simple.",
       problema: "La Gaceta publica unas 400 publicaciones por día hábil, y casi nadie la lee.",
