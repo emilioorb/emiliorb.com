@@ -18,7 +18,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check",
+    "check": "astro check && node scripts/verificar-css.ts",
     "astro": "astro"
   },
   "dependencies": {

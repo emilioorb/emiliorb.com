@@ -1093,15 +1093,14 @@ html[data-cine="quieto"] .controles-cine {
 }
 
 /* La lista cuelga del rótulo, centrada como él, con los colores de la escena. */
-/* La lista cuelga del centro del rótulo (--indice-x lo pone la cabecera al
-   abrir), no del centro de la ventana: con poco ancho la columna de la derecha
-   pesa más y el rótulo se corre. Nunca se sale por los costados. */
+/* Cuelga del centro del rótulo (--indice-x) sin salirse por los costados. */
 .cabecera-serie__indice {
   --ancho-indice: min(20rem, calc(100vw - 2 * var(--pad-seccion, 1.5rem)));
   --borde-indice: calc(var(--pad-seccion, 1.5rem) + var(--ancho-indice) / 2);
   position: fixed;
+  /* Sin `translate`: Lightning CSS lo borra si comparte regla con `transform`. */
   inset: calc(var(--alto-cabecera) - 0.75rem + env(safe-area-inset-top)) auto auto
-    clamp(var(--borde-indice), var(--indice-x, 50%), calc(100vw - var(--borde-indice)));
+    calc(clamp(var(--borde-indice), var(--indice-x, 50%), calc(100vw - var(--borde-indice))) - var(--ancho-indice) / 2);
   width: var(--ancho-indice);
   margin: 0;
   padding: 0.5rem;
@@ -1110,7 +1109,6 @@ html[data-cine="quieto"] .controles-cine {
   background: var(--c-fondo);
   color: var(--c-tinta);
   box-shadow: 0 12px 32px -16px rgb(0 0 0 / 0.25);
-  translate: -50% 0;
   opacity: 0;
   transform: translateY(-4px);
   transition:
