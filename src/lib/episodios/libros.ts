@@ -47,7 +47,6 @@ const NARRADOR: Record<Idioma, Readonly<Record<string, string>>> = {
     "the-infinity-machine": "Si trabaja con IA, le muestra de dónde viene una parte de lo que usa hoy.",
     "ai-for-good": "Léalo cuando la conversación sobre IA se le vuelva abstracta.",
     "ai-engineering": "De todo lo que hay sobre IA aplicada, es el que yo tendría en el escritorio.",
-    "build-a-large-language-model": "Léalo cuando un modelo le falle y quiera entender por qué.",
     "how-great-ideas-happen": "Lo dejo para el final: después de todos los demás, ayuda a elegir qué construir.",
   },
   en: {
@@ -61,7 +60,6 @@ const NARRADOR: Record<Idioma, Readonly<Record<string, string>>> = {
     "the-infinity-machine": "If you work with AI, it shows where part of what you use today came from.",
     "ai-for-good": "Read it when the conversation about AI starts to feel abstract.",
     "ai-engineering": "Of everything on applied AI, it's the one I'd keep on my desk.",
-    "build-a-large-language-model": "Read it when a model fails you and you want to understand why.",
     "how-great-ideas-happen": "I leave it for last: after all the others, it helps you choose what to build.",
   },
 };

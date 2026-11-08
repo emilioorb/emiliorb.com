@@ -7,7 +7,6 @@ import portadaPhilosophyDesign from "../assets/libros/a-philosophy-of-software-d
 import portadaDataIntensive from "../assets/libros/designing-data-intensive-applications.jpg";
 import portadaEngineeringGoogle from "../assets/libros/software-engineering-at-google.jpg";
 import portadaAiEngineering from "../assets/libros/ai-engineering.jpg";
-import portadaBuildLlm from "../assets/libros/build-a-large-language-model.jpg";
 import portadaCrisisEngineering from "../assets/libros/crisis-engineering.jpg";
 import portadaInfinityMachine from "../assets/libros/the-infinity-machine.jpg";
 import portadaAiForGood from "../assets/libros/ai-for-good.jpg";
@@ -712,19 +711,7 @@ export const LIBROS: readonly Libro[] = [
     },
   },
   {
-    slug: "build-a-large-language-model",
-    titulo: "Build a Large Language Model (From Scratch)",
-    portada: portadaBuildLlm,
-    autor: "Sebastian Raschka",
-    anio: "2024",
-    porQue: {
-      es: "Arma un modelo tipo GPT desde cero en PyTorch, del tokenizador al ajuste fino.",
-      en: "Builds a GPT-style model from scratch in PyTorch, from tokenizer to fine-tuning.",
-    },
-  },
-  {
     slug: "ai-for-good",
-    soloEnLibreria: true,
     titulo: "AI for Good",
     portada: portadaAiForGood,
     autor: "Josh Tyrangiel",
