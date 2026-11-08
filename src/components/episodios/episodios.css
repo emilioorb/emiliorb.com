@@ -231,6 +231,10 @@
   animation: guia 2.4s var(--ease-out) infinite;
 }
 
+:root[data-episodios="escenario"] .escena__lienzo:not([data-activa]) .apertura__guia::after {
+  animation-play-state: paused;
+}
+
 @keyframes guia {
   from {
     transform: translateY(-100%);
@@ -378,7 +382,7 @@
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   text-underline-offset: 4px;
-  transition: text-decoration-color 200ms var(--ease-out);
+  transition: text-decoration-color var(--dur-hover) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -875,14 +879,14 @@
   white-space: nowrap;
 }
 
+/* `backwards`: al terminar suelta la animación y su capa. */
 .subtitulos__letra {
-  opacity: 0;
-  animation: letra 160ms var(--ease-out) forwards;
+  animation: letra 160ms var(--ease-out) backwards;
 }
 
 @keyframes letra {
-  to {
-    opacity: 1;
+  from {
+    opacity: 0;
   }
 }
 
@@ -925,7 +929,7 @@
   text-decoration-color: var(--borde);
   text-underline-offset: 4px;
   cursor: pointer;
-  transition: text-decoration-color 200ms var(--ease-out);
+  transition: text-decoration-color var(--dur-hover) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -954,7 +958,7 @@ html[data-cine="quieto"] {
   right: 1.5rem;
   display: flex;
   gap: 0.5rem;
-  transition: opacity 300ms var(--ease-out);
+  transition: opacity var(--dur-ui) var(--ease-out);
 }
 
 html[data-cine="quieto"] .controles-cine {
@@ -974,7 +978,7 @@ html[data-cine="quieto"] .controles-cine {
   text-decoration-color: var(--borde);
   text-underline-offset: 4px;
   cursor: pointer;
-  transition: text-decoration-color 200ms var(--ease-out);
+  transition: text-decoration-color var(--dur-hover) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1003,11 +1007,13 @@ html[data-cine="quieto"] .controles-cine {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 1rem;
-  padding: calc(1.25rem + env(safe-area-inset-top)) var(--pad-seccion, 1.5rem) 0;
+  padding: calc(1.25rem + env(safe-area-inset-top, 0px))
+    max(var(--pad-seccion, 1.5rem), env(safe-area-inset-right, 0px)) 0
+    max(var(--pad-seccion, 1.5rem), env(safe-area-inset-left, 0px));
   pointer-events: none;
   transition:
-    opacity 300ms var(--ease-out),
-    transform 300ms var(--ease-out);
+    opacity var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-out);
 }
 
 /* Sobre una tarjeta invertida la cabecera usaba los colores de la página y
@@ -1051,7 +1057,7 @@ html[data-cine="quieto"] .controles-cine {
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--dur-hover) var(--ease-out);
 }
 
 /* Un rótulo largo (el nombre de un proyecto) se corta antes de pisar el contacto. */
@@ -1069,7 +1075,7 @@ html[data-cine="quieto"] .controles-cine {
   flex: none;
   width: 0.625rem;
   height: 0.375rem;
-  transition: transform 200ms var(--ease-out);
+  transition: transform var(--dur-pop) var(--ease-out);
 }
 
 .cabecera-serie__episodio:focus-visible {
@@ -1109,13 +1115,15 @@ html[data-cine="quieto"] .controles-cine {
   background: var(--c-fondo);
   color: var(--c-tinta);
   box-shadow: 0 12px 32px -16px rgb(0 0 0 / 0.25);
+  overscroll-behavior: contain;
   opacity: 0;
-  transform: translateY(-4px);
+  transform-origin: top center;
+  transform: translateY(-4px) scale(0.97);
   transition:
-    opacity 180ms var(--ease-out),
-    transform 180ms var(--ease-out),
-    overlay 180ms allow-discrete,
-    display 180ms allow-discrete;
+    opacity var(--dur-pop) var(--ease-out),
+    transform var(--dur-pop) var(--ease-out),
+    overlay var(--dur-pop) allow-discrete,
+    display var(--dur-pop) allow-discrete;
 }
 
 .cabecera-serie__indice:popover-open {
@@ -1126,7 +1134,7 @@ html[data-cine="quieto"] .controles-cine {
 @starting-style {
   .cabecera-serie__indice:popover-open {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(0.97);
   }
 }
 
@@ -1147,8 +1155,8 @@ html[data-cine="quieto"] .controles-cine {
   font-weight: 500;
   text-decoration: none;
   transition:
-    color 150ms var(--ease-out),
-    background-color 150ms var(--ease-out);
+    color var(--dur-hover) var(--ease-out),
+    background-color var(--dur-hover) var(--ease-out);
 }
 
 .cabecera-serie__indice a[aria-current],
@@ -1159,6 +1167,17 @@ html[data-cine="quieto"] .controles-cine {
 .cabecera-serie__indice a:focus-visible {
   outline: none;
   background: color-mix(in srgb, var(--c-tinta) 6%, transparent);
+}
+
+/* En táctil no hay hover: la respuesta llega al apretar. */
+.cabecera-serie__indice a:active {
+  color: var(--c-tinta);
+  background: color-mix(in srgb, var(--c-tinta) 10%, transparent);
+  transition-duration: 0ms;
+}
+
+.cabecera-serie__episodio:active {
+  color: var(--c-tinta);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1202,7 +1221,7 @@ html[data-cine="quieto"] .controles-cine {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-decoration: none;
-  transition: color 200ms var(--ease-out);
+  transition: color var(--dur-hover) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1219,13 +1238,32 @@ html[data-cine="quieto"] .controles-cine {
   text-decoration: underline;
   text-decoration-color: var(--c-borde);
   text-underline-offset: 4px;
-  transition: text-decoration-color 200ms var(--ease-out);
+  transition: text-decoration-color var(--dur-hover) var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .cabecera-serie__contacto:hover {
     text-decoration-color: var(--c-tinta);
   }
+}
+
+/* Zona de toque de 24 px o más (WCAG 2.5.8) sin mover la fila. */
+.cabecera-serie__nombre,
+.cabecera-serie__episodio,
+.cabecera-serie__volver,
+.cabecera-serie__idioma,
+.cabecera-serie__contacto {
+  position: relative;
+}
+
+.cabecera-serie__nombre::after,
+.cabecera-serie__episodio::after,
+.cabecera-serie__volver::after,
+.cabecera-serie__idioma::after,
+.cabecera-serie__contacto::after {
+  content: "";
+  position: absolute;
+  inset: -12px -10px;
 }
 
 /* En el teléfono el rótulo entero no cabe: el episodio ya lo dice su tarjeta
@@ -1241,7 +1279,7 @@ html[data-cine="quieto"] .controles-cine {
 
 @media (prefers-reduced-motion: reduce) {
   .cabecera-serie {
-    transition: opacity 200ms linear;
+    transition: opacity var(--dur-hover) linear;
   }
   .cabecera-serie__indice,
   .cabecera-serie__indice:popover-open {

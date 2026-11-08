@@ -9,25 +9,36 @@
 
 <script>
   import Lenis from "lenis";
+  import { FRENO, registrarLenis } from "../lib/scroll";
 
   // Quien pidió menos movimiento se queda con el scroll del sistema:
   // suavizarlo es justo el tipo de movimiento que esa preferencia apaga.
   if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
     const lenis = new Lenis({
-      duration: 1.7,
-      // Frena al final sin rebotar.
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.2,
+      easing: FRENO,
       smoothWheel: true,
       // El táctil NO se suaviza: el dedo ya arrastra la página, y agregarle
       // inercia artificial se siente como si el teléfono estuviera trabado.
       syncTouch: false,
     });
 
+    // Se apaga cuando la serie mueve Lenis con el reloj de GSAP.
+    let latiendo = true;
     const latido = (tiempo: number) => {
+      if (!latiendo) return;
       lenis.raf(tiempo);
       requestAnimationFrame(latido);
     };
     requestAnimationFrame(latido);
+    registrarLenis(lenis, {
+      detener: () => (latiendo = false),
+      reanudar: () => {
+        if (latiendo) return;
+        latiendo = true;
+        requestAnimationFrame(latido);
+      },
+    });
 
     // Los anclajes viajan con el mismo deslizamiento. Por delegación y no
     // enlace por enlace, para que también valga para lo que se pinte después.
@@ -44,6 +55,9 @@
 
       const nodo = document.querySelector<HTMLElement>(url.hash);
       if (!nodo) return;
+
+      // En la serie, ir a una escena es un corte que hace la isla con el hash.
+      if (document.documentElement.dataset.episodios === "escenario" && nodo.closest(".escena")) return;
 
       evento.preventDefault();
       const respiro = parseFloat(getComputedStyle(nodo).scrollMarginTop) || 0;

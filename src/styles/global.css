@@ -13,11 +13,16 @@
 
   /* Una sola curva de salida para toda la página. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Duraciones de la interfaz; el modo cine y el narrador van aparte. */
+  --dur-press: 140ms;
+  --dur-pop: 180ms;
+  --dur-hover: 200ms;
+  --dur-ui: 300ms;
 }
 
 :root {
-  /* El «ch» de Geist en em. Un tope en «ch» depende de la fuente que pinta:
-     con el respaldo medía 17% menos y el texto se reacomodaba al llegar Geist. */
+  /* El «ch» de Geist en em: un tope en «ch» cambia con la fuente que pinta. */
   --ch: 0.683em;
   color-scheme: light;
   /* Chromium no repinta la barra de la ventana cuando cambia `color-scheme` en
@@ -83,7 +88,7 @@
 /* Estado de presión para cualquier pulsable. */
 .pulsable {
   -webkit-tap-highlight-color: transparent;
-  transition: transform 140ms var(--ease-out);
+  transition: transform var(--dur-press) var(--ease-out);
 }
 
 .pulsable:active:not(:disabled):not([aria-disabled="true"]) {

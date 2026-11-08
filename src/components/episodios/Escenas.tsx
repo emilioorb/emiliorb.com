@@ -13,7 +13,7 @@ import type {
   EscenaSintesis,
   EscenaTitulo,
 } from "../../lib/episodios/tipos";
-import { createContext, useContext } from "react";
+import { createContext, memo, useContext } from "react";
 import type { TextosSerie } from "../../i18n/ui";
 import { BASE_PIEZA, FORMA_PIEZA } from "./piezas";
 
@@ -392,7 +392,8 @@ function Dibujo({ escena }: { escena: Escena }) {
   }
 }
 
-export function EscenaEnPantalla({ escena, orden }: { escena: Escena; orden: number }) {
+// La isla re-renderiza en cada momento; las escenas no cambian.
+export const EscenaEnPantalla = memo(function EscenaEnPantalla({ escena, orden }: { escena: Escena; orden: number }) {
   return (
     <section
       id={escena.id}
@@ -409,4 +410,4 @@ export function EscenaEnPantalla({ escena, orden }: { escena: Escena; orden: num
       </div>
     </section>
   );
-}
+});

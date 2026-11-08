@@ -9,6 +9,7 @@ import { CabeceraSerie, type RutasSerie } from "../episodios/CabeceraSerie";
 import { TextosEscena } from "../episodios/Escenas";
 import type { TextosSerie } from "../../i18n/ui";
 import { narradorDeGuion } from "../../lib/episodios/narrador";
+import { adoptarLenis, desplazarA, hayLenis, posicionDePartida } from "../../lib/scroll";
 
 import type { EntradaIndice, Escena } from "../../lib/episodios/tipos";
 import "../episodios/episodios.css";
@@ -63,6 +64,13 @@ interface Momento {
 }
 
 const MOVIMIENTO = "(prefers-reduced-motion: no-preference)";
+
+interface ConYield {
+  scheduler?: { yield?: () => Promise<void> };
+}
+/** Devuelve el hilo principal entre tarea y tarea. */
+const ceder = (): Promise<void> =>
+  (globalThis as ConYield).scheduler?.yield?.() ?? new Promise((listo) => setTimeout(listo, 0));
 const MENOS_MOVIMIENTO = "(prefers-reduced-motion: reduce)";
 /** Las teclas que pasan la serie un momento por pulsación, y hacia dónde. */
 const TECLAS_PASO: Readonly<Record<string, 1 | -1>> = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
@@ -125,7 +133,7 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
     raizHtml.dataset.cine = "quieto";
     let espera = 0;
     const despertar = () => {
-      raizHtml.dataset.cine = "activo";
+      if (raizHtml.dataset.cine !== "activo") raizHtml.dataset.cine = "activo";
       window.clearTimeout(espera);
       espera = window.setTimeout(() => (raizHtml.dataset.cine = "quieto"), 2500);
     };
@@ -165,14 +173,15 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
       const mm = gsap.matchMedia();
       // Sin movimiento no hay coreografías: basta con caer en el borde de la escena.
       let aterrizarEn: (seccion: HTMLElement) => void = aterrizar;
+      let armado: Promise<void> = Promise.resolve();
 
-      mm.add(MOVIMIENTO, () => {
+      mm.add(MOVIMIENTO, (contexto) => {
         const raizHtml = document.documentElement;
         raizHtml.dataset.episodios = "escenario";
-        // Lenis ya suaviza la rueda: un scrub con retraso encima se sentiría
-        // como arrastrar la página por barro. Sin Lenis (táctil), un poco de
-        // suavizado.
-        const scrub = raizHtml.classList.contains("lenis-smooth") ? true : 0.4;
+        // Lenis ya suaviza la rueda; sin Lenis (táctil), un poco de scrub.
+        const scrub = hayLenis() ? true : 0.4;
+        const soltarLenis = adoptarLenis(gsap.ticker, ScrollTrigger.update);
+        if (hayLenis()) gsap.ticker.lagSmoothing(0);
 
         const lienzos = secciones.map((s) => s.querySelector<HTMLElement>(".escena__lienzo"));
         const cortes = lienzos.map((l) => (l ? crearCorte(l) : null));
@@ -194,24 +203,44 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
         };
 
         cortarA(0, 1);
-        const fijadas: (Fijada | null)[] = secciones.map((seccion, i) => {
+        secciones.forEach((seccion, i) => {
+          if (i === 0) return;
+          ScrollTrigger.create({
+            trigger: seccion,
+            start: "top top",
+            onEnter: () => cortarA(i, 1),
+            onLeaveBack: () => cortarA(i - 1, -1),
+          });
+        });
+
+        const fijadas: (Fijada | null)[] = secciones.map(() => null);
+        let paradasMedidas: number[] | null = null;
+        const coreografiar = (i: number) => {
           const escena = escenas[i];
-          if (!escena) return null;
-          if (i > 0) {
-            ScrollTrigger.create({
-              trigger: seccion,
-              start: "top top",
-              onEnter: () => cortarA(i, 1),
-              onLeaveBack: () => cortarA(i - 1, -1),
-            });
-          }
-          return coreografiaFijada(escena, seccion, {
+          const seccion = secciones[i];
+          if (!escena || !seccion) return;
+          fijadas[i] = coreografiaFijada(escena, seccion, {
             scrub,
             alCambiarTiempo: (tiempo) => {
               if (indiceActual.current === i) mover(i, tiempo);
             },
           });
+        };
+        // La escena visible va ya y las demás de a una por tarea: armar todo junto
+        // bloqueaba el hilo un segundo en un teléfono.
+        let cancelado = false;
+        coreografiar(0);
+        requestAnimationFrame(() => {
+          iniciado = true;
         });
+        armado = (async () => {
+          for (let i = 1; i < secciones.length; i++) {
+            await ceder();
+            if (cancelado) return;
+            contexto.add(() => coreografiar(i));
+            paradasMedidas = null;
+          }
+        })();
 
         // En una escena con coreografía, el borde es el instante antes de que
         // entre lo primero: se aterriza donde su primer momento ya se ve entero.
@@ -243,7 +272,8 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
 
         // Las flechas pasan la serie como diapositivas: cada pulsación lleva al
         // siguiente momento (una línea, un paso o una escena), sin dejarla apretada.
-        const paradas = () =>
+        // Se miden una vez por refresh, no en cada touchmove.
+        const medirParadas = () =>
           secciones
             .flatMap((seccion, i) => {
               const fijada = fijadas[i];
@@ -257,8 +287,13 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
               return [i === 0 ? 0 : seccion.getBoundingClientRect().top + window.scrollY + window.innerHeight * 0.1];
             })
             .sort((a, b) => a - b);
+        const paradas = () => (paradasMedidas ??= medirParadas());
+        const olvidarParadas = () => {
+          paradasMedidas = null;
+        };
+        ScrollTrigger.addEventListener("refresh", olvidarParadas);
         const paradaHacia = (direccion: 1 | -1) => {
-          const actual = window.scrollY;
+          const actual = posicionDePartida();
           const todas = paradas();
           return direccion === 1 ? todas.find((top) => top > actual + 4) : todas.findLast((top) => top < actual - 4);
         };
@@ -272,7 +307,7 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
           // Dejarla apretada no encadena saltos: un paso por pulsación.
           if (evento.repeat) return;
           const destino = paradaHacia(direccion);
-          if (destino !== undefined) window.scrollTo({ top: destino, behavior: "smooth" });
+          if (destino !== undefined) desplazarA(destino);
         };
         window.addEventListener("keydown", alTeclear);
 
@@ -288,28 +323,40 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
         const alArrastrar = (evento: TouchEvent) => {
           const dedo = evento.touches[0];
           if (!toque || !dedo || !evento.cancelable) return;
+          // Con el menú abierto el dedo es del menú: la serie no se mueve detrás.
+          const menu = document.querySelector<HTMLElement>(".cabecera-serie__indice:popover-open");
+          if (menu) {
+            const enMenu = evento.target instanceof Node && menu.contains(evento.target);
+            if (!enMenu || menu.scrollHeight <= menu.clientHeight) evento.preventDefault();
+            return;
+          }
+          if (toque.dio) {
+            evento.preventDefault();
+            return;
+          }
           const dy = toque.y - dedo.clientY;
-          // Un gesto de lado (la galería, un zoom) sigue siendo del navegador.
-          if (Math.abs(dy) < Math.abs(toque.x - dedo.clientX)) return;
+          // Un gesto de lado no da paso, pero tampoco suelta el scroll nativo.
+          const deLado = Math.abs(dy) < Math.abs(toque.x - dedo.clientX);
           const direccion = dy > 0 ? 1 : -1;
           const destino = paradaHacia(direccion);
           if (destino === undefined) return;
           evento.preventDefault();
-          if (toque.dio || Math.abs(dy) < UMBRAL_GESTO) return;
+          if (deLado || Math.abs(dy) < UMBRAL_GESTO) return;
           toque.dio = true;
-          window.scrollTo({ top: destino, behavior: "smooth" });
+          desplazarA(destino, { conDedo: true });
         };
         const alSoltar = () => (toque = null);
         window.addEventListener("touchstart", alTocar, { passive: true });
         window.addEventListener("touchmove", alArrastrar, { passive: false });
         window.addEventListener("touchend", alSoltar, { passive: true });
         window.addEventListener("touchcancel", alSoltar, { passive: true });
-        requestAnimationFrame(() => {
-          iniciado = true;
-        });
 
 
         return () => {
+          cancelado = true;
+          soltarLenis();
+          gsap.ticker.lagSmoothing(500, 33);
+          ScrollTrigger.removeEventListener("refresh", olvidarParadas);
           contenedor.removeEventListener("focusin", alEnfocar);
           window.removeEventListener("keydown", alTeclear);
           window.removeEventListener("touchstart", alTocar);
@@ -343,9 +390,12 @@ export default function Episodios({ escenas, rutas, indice, textos }: Props) {
       // Llegar con un ancla (la ficha vuelve a #ep5-proyectos, y hay enlaces viejos
       // a #projects): el corte cae justo en el borde de la escena, así que se
       // aterriza un poco adentro de ella.
+      // Aterrizar necesita la coreografía de la escena de destino.
       const seguirAncla = () => {
-        const anclada = escenaDelAncla(secciones);
-        if (anclada) aterrizarEn(anclada);
+        void armado.then(() => {
+          const anclada = escenaDelAncla(secciones);
+          if (anclada) aterrizarEn(anclada);
+        });
       };
       seguirAncla();
       window.addEventListener("hashchange", seguirAncla);
